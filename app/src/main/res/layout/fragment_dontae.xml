@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:layoutDirection="ltr"
+    tools:context=".view.fragment.DonateFragment">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/fragment_donate_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/toolbar_color"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <dev.aban.visible.utils.custom_view.TextViewPlus
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/donate_us"
+            android:textColor="@color/toolbar_content_color"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/fragment_donate_back"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:padding="17dp"
+            android:scaleX="-1"
+            android:src="@drawable/ic_back_black" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_donate_rv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_donate_toolbar" />
+
+    <dev.aban.visible.utils.custom_view.TextViewPlus
+        android:id="@+id/fragment_donate_btn"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/accent_round_color"
+        android:gravity="center"
+        android:text="@string/donate"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        app:bold="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_donate_rv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

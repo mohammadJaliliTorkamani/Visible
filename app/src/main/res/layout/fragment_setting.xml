@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:layoutDirection="ltr"
+    tools:context=".view.fragment.SettingFragment">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/fragment_setting_toolbar"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/toolbar_color"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <dev.aban.visible.utils.custom_view.TextViewPlus
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/setting"
+            android:textColor="@color/toolbar_content_color"
+            android:textSize="16sp"
+            app:bold="true" />
+
+        <ImageView
+            android:id="@+id/fragment_setting_back"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|right"
+            android:padding="17dp"
+            android:scaleX="-1"
+            android:src="@drawable/ic_back_black" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fragment_setting_toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.loopeer.shadow.ShadowView
+                android:id="@+id/setting_general_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                app:cornerRadius="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shadowMargin="4dp"
+                app:shadowRadius="6dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="24dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="18dp">
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_general"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:gravity="right"
+                        android:text="@string/general"
+                        android:textColor="@android:color/black"
+                        android:textSize="13sp"
+
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/setting_general_view"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@android:color/black"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_general" />
+
+                    <androidx.coordinatorlayout.widget.CoordinatorLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:paddingTop="16dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_general_view">
+
+                        <dev.aban.visible.utils.custom_view.TextViewPlus
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:text="@string/play_detect_sound"
+                            android:textColor="@android:color/black"
+                            android:textSize="12sp" />
+
+                        <Switch
+                            android:id="@+id/setting_general_bubble_sound"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left|center_vertical"
+                            android:text=""
+                            android:textSize="12sp" />
+
+
+                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.loopeer.shadow.ShadowView>
+
+            <com.loopeer.shadow.ShadowView
+                android:id="@+id/setting_legal_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                app:cornerRadius="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/setting_general_card"
+                app:shadowMargin="4dp"
+                app:shadowRadius="6dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="18dp">
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_legal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:text="@string/legal_policy"
+                        android:textColor="@android:color/black"
+                        android:textSize="13sp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:id="@+id/setting_legal_view"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@android:color/black"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_legal" />
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_legal_open_source_licenses"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="right"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/open_source_licences"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_legal_view" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.loopeer.shadow.ShadowView>
+
+            <com.loopeer.shadow.ShadowView
+                android:id="@+id/setting_authority_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                app:cornerRadius="8dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/setting_legal_card"
+                app:shadowMargin="4dp"
+                app:shadowRadius="6dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="8dp"
+                    android:paddingBottom="18dp">
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_authority"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:text="@string/app_name_separated"
+                        android:textColor="@android:color/black"
+                        android:textSize="13sp"
+                        app:bold="true"
+
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="8dp"
+                        android:background="@android:color/black"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_authority" />
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_authority_contact_us"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginRight="16dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="right"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/contact_us"
+                        android:textColor="@android:color/black"
+                        android:textSize="13sp"
+
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_authority" />
+
+                    <dev.aban.visible.utils.custom_view.TextViewPlus
+                        android:id="@+id/setting_authority_log_out"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="right"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/log_out_account"
+                        android:textColor="@android:color/holo_red_light"
+
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/setting_authority_contact_us" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.loopeer.shadow.ShadowView>
+
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:maxLines="1"
+                android:text="@string/version_code"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                app:bold="true"
+
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/setting_authority_card" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dr_curve_drawer"
+    android:layoutDirection="ltr">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/navigation_drawer_developer_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="32dp"
+        android:src="@color/light_gray"
+        app:civ_border_color="@color/borders_color"
+        app:civ_border_width="0.3dp"
+        app:layout_constraintHorizontal_bias="0.621"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/get_pro_version" />
+
+    <dev.aban.visible.utils.custom_view.TextViewPlus
+        android:id="@+id/navigation_drawer_developer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="13sp"
+        app:layout_constraintLeft_toLeftOf="@id/navigation_drawer_developer_image"
+        app:layout_constraintRight_toRightOf="@id/navigation_drawer_developer_image"
+        app:layout_constraintTop_toBottomOf="@+id/navigation_drawer_developer_image" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/navigation_drawer_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="30dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navigation_drawer_developer_name" />
+
+    <dev.aban.visible.utils.custom_view.TextViewPlus
+        android:id="@+id/get_pro_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingTop="4dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="4dp"
+        android:text="@string/get_pro_version"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="15sp"
+        app:bold="true"
+        app:layout_constraintLeft_toLeftOf="@id/navigation_drawer_developer_image"
+        app:layout_constraintRight_toRightOf="@id/navigation_drawer_developer_image"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

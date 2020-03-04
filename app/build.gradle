@@ -1,0 +1,103 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "dev.aban.visible"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "FLURRY_KEY", "\"3HXGQRNTGBPNRKT42Y46\""
+        buildConfigField "String", "APPCENTER", "\"829aa9f6-4c85-49bd-9871-2ead923d1fc8\""
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
+
+    aaptOptions {
+        noCompress "tflite"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    //network rest connection library (retrofit)
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+
+    //GSON converters for retrofit
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+
+    //GSON parser for retrofit
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //network logger for retrofit
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
+
+    //picture loading library
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //base network connector library
+    implementation 'com.squareup.okio:okio:2.2.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.1'
+
+    //count animation text view
+    implementation 'com.daasuu:CountAnimationTextView:0.1.2'
+
+    //high level abstracted permission library
+    implementation 'com.karumi:dexter:5.0.0'
+
+    //cieclw image view
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
+
+    //shadow layout
+    implementation 'com.loopeer.lib:shadow:0.0.3'
+
+    //pushe
+    implementation 'com.pushpole.android:pushsdk:1.7.0'
+
+    //image chooser
+    implementation 'com.github.nguyenhoanglam:ImagePicker:1.3.3'
+
+//    api 'com.otaliastudios:cameraview:2.6.1'
+
+    //tensoflow
+    implementation 'org.tensorflow:tensorflow-android:1.5.0'
+
+    // Use local TensorFlow library
+    implementation 'com.google.android.gms:play-services-vision:19.0.0'
+
+    //downloader
+    implementation 'com.ixuea:AndroidDownloader:2.0.6'
+
+    //circle image progressbar
+    implementation 'com.github.aliab:circular-music-progressbar:v1.3.0'
+
+
+    //appcenter
+    def appCenterSdkVersion = '3.0.0'
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
+
+    //flurry
+    implementation 'com.flurry.android:analytics:12.2.0@aar'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+}

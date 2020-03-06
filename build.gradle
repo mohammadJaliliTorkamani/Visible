@@ -23,6 +23,9 @@ allprojects {
             url 'https://google.bintray.com/tensorflow'
             google()
         }
+        maven {
+            url 'https://dl.bintray.com/tapsellorg/maven'
+        }
     }
 }
 

@@ -34,11 +34,11 @@
 
                 <ImageView
                     android:id="@+id/fragment_main_camera_change"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_marginLeft="12dp"
                     android:padding="6dp"
-                    android:src="@drawable/ic_exchange"
+                    android:src="@drawable/ic_change"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -114,6 +114,14 @@
                 android:layout_height="match_parent"
                 tools:layout="@layout/fragment_blank" />
 
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:id="@+id/fragment_main_no_filter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/light_gray"
+                android:gravity="center"
+                android:text="فیلتری انتخاب نشده است\n\nانتخاب فیلتر" />
+
             <ImageView
                 android:id="@+id/fragment_main_filter"
                 android:layout_width="60dp"
@@ -128,9 +136,10 @@
                 android:id="@+id/fragment_main_capture"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
+                android:padding="12dp"
                 android:layout_gravity="center_horizontal|bottom"
                 android:layout_marginBottom="20dp"
-                android:padding="10dp"
+                android:visibility="gone"
                 android:src="@drawable/ic_frame" />
 
 

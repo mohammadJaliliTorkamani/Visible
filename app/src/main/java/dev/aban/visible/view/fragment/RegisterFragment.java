@@ -272,9 +272,9 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 if (report.areAllPermissionsGranted()) {
                     ImagePicker.with(RegisterFragment.this)                         //  Initialize ImagePicker with activity or fragment context
-                            .setCameraOnly(false)               //  Camera mode
                             .setMultipleMode(false)              //  Select multiple images or single image
                             .setShowCamera(true)                //  Show camera button
+                            .setCameraOnly(false)               //  Camera mode
                             .setAlwaysShowDoneButton(true)      //  Set always show done button in multiple mode
                             .setRequestCode(100)                //  Set request code, default Config.RC_PICK_IMAGES
                             .setMaxSize(128)

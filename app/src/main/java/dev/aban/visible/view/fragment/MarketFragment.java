@@ -2,6 +2,7 @@ package dev.aban.visible.view.fragment;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -31,10 +32,11 @@ import dev.aban.visible.R;
 import dev.aban.visible.adapter.BubbleImageAdapter;
 import dev.aban.visible.adapter.StoreCurrentBubbleAdapter;
 import dev.aban.visible.adapter.StoreSellBubbleAdapter;
-import dev.aban.visible.listener.OnExecutePayment;
+import dev.aban.visible.listener.OnExecuteSavedPayment;
 import dev.aban.visible.model.BubbleItem;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
+import dev.aban.visible.utils.BazaarPurchase;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.Constants.DownloadMode;
 import dev.aban.visible.utils.ContextHelper;
@@ -179,7 +181,8 @@ public class MarketFragment extends Fragment {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
                                     buy.setClickable(false);
-                                    Helper.bubblePurchase(item.getPrice(), item.getId(), new OnExecutePayment() {
+                                    dialog.dismiss();
+                                    Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
                                         @Override
                                         public void onSuccessPayment(String ITN) {
                                             Log.d(Constants.TAG, ITN);
@@ -212,7 +215,7 @@ public class MarketFragment extends Fragment {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
                                     buy.setClickable(false);
-                                    downloadItem(bubbleItem, logo, buy, DownloadMode.JUST_FREEZE);
+                                    downloadItem(bubbleItem, logo, buy, DownloadMode.JUST_FROZEN_WEIGHT);
                                 });
                             }
                         } else if (freezeExists && !labelsExists) {
@@ -235,7 +238,8 @@ public class MarketFragment extends Fragment {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
                                     buy.setClickable(false);
-                                    Helper.bubblePurchase(item.getPrice(), item.getId(), new OnExecutePayment() {
+                                    dialog.dismiss();
+                                    Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
                                         @Override
                                         public void onSuccessPayment(String ITN) {
                                             Log.d(Constants.TAG, ITN);
@@ -282,7 +286,7 @@ public class MarketFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                     } else {
                         Log.d(Constants.TAG, "Error in bubble info!");
-                        dialog.dismiss();
+                        dialog1.dismiss();
                     }
                 }
 
@@ -292,35 +296,34 @@ public class MarketFragment extends Fragment {
                 }
             });
         });
+
         dialog.show();
     }
 
     private void downloadItem(BubbleItem item, CircularMusicProgressBar logo, TextViewPlus buy, DownloadMode downloadMode) {
         Helper.recordEventClick("ProfileFragment", "Download Item " + item.getTitle());
-        Helper.showToast(getActivity(), "Download started");
-        Helper.downloadItem(item, downloadMode,
-                (progressPercentage) -> {
-                    Log.d(Constants.TAG, "" + progressPercentage);
-                    logo.setValue(progressPercentage * 100);
-                },
-                () -> {
-                    buy.setClickable(false);
-                    buy.setVisibility(View.GONE);
-                    logo.setValue(0);
-                    Helper.showToast(getActivity(), "Filter '" + item.getTitle() + "' Downloaded !");
-                    item.setPermittedToUse(true);
-                    if (!currentBubbles.contains(item)) {
-                        currentBubbles.add(item);
-                        currentBubbles_adapter.notifyDataSetChanged();
-                        displayEmptyCurrentContent(currentBubbles.isEmpty());
-                    }
+        Helper.showToast(getActivity(), "دانلود شروع شد");
+        Helper.downloadItem(item, downloadMode, (progressPercentage) -> {
+            Log.d(Constants.TAG, "" + progressPercentage);
+            logo.setValue(progressPercentage * 100);
+        }, () -> {
+            buy.setClickable(false);
+            buy.setVisibility(View.GONE);
+            logo.setValue(0);
+            Helper.showToast(getActivity(), "حباب '" + item.getTitle() + "' دانلود شد !");
+            item.setPermittedToUse(true);
+            if (!currentBubbles.contains(item)) {
+                currentBubbles.add(item);
+                currentBubbles_adapter.notifyDataSetChanged();
+                displayEmptyCurrentContent(currentBubbles.isEmpty());
+            }
 
-                    if (toSellBubbles.contains(item)) {
-                        toSellBubbles.remove(item);
-                        sellBubbles_adapter.notifyDataSetChanged();
-                        displayEmptySellContent(toSellBubbles.isEmpty());
-                    }
-                });
+            if (toSellBubbles.contains(item)) {
+                toSellBubbles.remove(item);
+                sellBubbles_adapter.notifyDataSetChanged();
+                displayEmptySellContent(toSellBubbles.isEmpty());
+            }
+        });
     }
 
     private void findViews() {
@@ -339,5 +342,16 @@ public class MarketFragment extends Fragment {
     private void displayEmptySellContent(boolean displayEmpty) {
         sellBubbles_rv.setVisibility(!displayEmpty ? View.VISIBLE : View.GONE);
         sellBubbles_rv_empty.setVisibility(displayEmpty ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(Constants.TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data + ")");
+        // Pass on the activity result to the helper for handling
+        if (!BazaarPurchase.getInstance().getHelper().handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        } else {
+            Log.d(Constants.TAG, "onActivityResult handled by IABUtil.");
+        }
     }
 }

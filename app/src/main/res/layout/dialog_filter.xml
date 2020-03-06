@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/round_white_corner"
     android:layoutDirection="ltr"
+    android:paddingBottom="10dp"
     android:orientation="vertical">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -48,7 +49,7 @@
             android:layout_height="match_parent"
             android:background="@color/light_gray"
             android:gravity="center"
-            android:minHeight="400dp"
+            android:minHeight="380dp"
             android:text="خالی !"
             android:textColor="@android:color/darker_gray"
             android:visibility="visible" />
@@ -57,7 +58,6 @@
             android:id="@+id/dialog_filter_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="400dp"
             android:visibility="visible" />
 
     </FrameLayout>
@@ -66,6 +66,7 @@
         android:id="@+id/dialog_filter_bubble_market"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
+        android:layout_marginTop="6dp"
         android:background="@drawable/toolbar_color_bottom_header"
         android:paddingTop="3dp"
         android:paddingBottom="3dp"
@@ -92,6 +93,14 @@
             android:src="@drawable/ic_back_accent" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <ir.tapsell.sdk.bannerads.TapsellBannerView
+        android:id="@+id/dialog_filter_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        app:tapsell_banner_type="banner_320x50"
+        app:tapsell_zone_id="5e60fa071481a9000164b843" />
 
 
 </LinearLayout>

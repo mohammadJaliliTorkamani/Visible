@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Switch;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +30,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private View view;
 
     private ImageView back;
+    private CoordinatorLayout bubbleSoundSwitchContainer;
     private Switch bubbleSoundSwitch;
     private TextViewPlus openSource;
     private TextViewPlus contactUs;
@@ -49,6 +51,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
 
     private void initialize() {
         Helper.recordEventView("SettingFragment");
+        bubbleSoundSwitch.setClickable(false);
         bubbleSoundSwitch.setChecked(Helper.loadSetting(Constants._TABLE_USER, Constants._KEY_BUBBLE_SOUND, "true").equals("true"));
         initLicenses();
     }
@@ -72,6 +75,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         signOut.setOnClickListener(this);
         contactUs.setOnClickListener(this);
         openSource.setOnClickListener(this);
+        bubbleSoundSwitchContainer.setOnClickListener(this);
     }
 
     private void findViews() {
@@ -79,6 +83,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         contactUs = view.findViewById(R.id.setting_authority_contact_us);
         signOut = view.findViewById(R.id.setting_authority_log_out);
         openSource = view.findViewById(R.id.setting_legal_open_source_licenses);
+        bubbleSoundSwitchContainer = view.findViewById(R.id.setting_general_bubble_sound_container);
         bubbleSoundSwitch = view.findViewById(R.id.setting_general_bubble_sound);
     }
 
@@ -98,6 +103,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
                 Helper.recordEventClick("SettingFragment", "ContactUs");
                 Helper.emailToDeveloper(getActivity());
                 break;
+            case R.id.setting_general_bubble_sound_container:
+                bubbleSoundSwitch.setChecked(!bubbleSoundSwitch.isChecked());
+                break;
+
         }
     }
 

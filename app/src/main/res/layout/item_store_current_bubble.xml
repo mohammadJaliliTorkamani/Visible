@@ -3,10 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginRight="20dp"
-    android:layoutDirection="ltr"
-    app:layout_goneMarginLeft="8dp"
-    app:layout_goneMarginRight="12dp">
+    android:layout_marginLeft="20dp"
+    android:layoutDirection="ltr">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/item_store_current_bubble_image"
@@ -27,7 +25,6 @@
         android:maxLines="2"
         android:textColor="@color/colorAccent"
         android:textSize="13sp"
-
         app:layout_constraintLeft_toLeftOf="@id/item_store_current_bubble_image"
         app:layout_constraintRight_toRightOf="@id/item_store_current_bubble_image"
         app:layout_constraintTop_toBottomOf="@id/item_store_current_bubble_image" />

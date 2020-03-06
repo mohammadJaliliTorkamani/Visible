@@ -12,6 +12,7 @@ import com.pushpole.sdk.PushPole;
 
 import dev.aban.visible.BuildConfig;
 import dev.aban.visible.R;
+import ir.tapsell.sdk.Tapsell;
 
 public class ContextHelper extends Application {
     private static Context context;
@@ -34,6 +35,7 @@ public class ContextHelper extends Application {
                 .build(this, BuildConfig.FLURRY_KEY);
         FlurryAgent.setUserId(PushPole.getId(this));
         AppCenter.start(this, BuildConfig.APPCENTER, Analytics.class, Crashes.class);
+        Tapsell.initialize(this, BuildConfig.TAPSELL_KEY);
         initConstantObjects();
     }
 

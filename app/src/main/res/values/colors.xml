@@ -9,7 +9,7 @@
     <color name="medium_gray">#B8B8B8</color>
     <color name="toolbar_color">@color/colorAccent</color>
     <color name="toolbar_content_color">@android:color/white</color>
-    <color name="capture_icon">#45909E</color>
+    <color name="capture_icon">@color/colorAccent</color>
     <color name="borders_color">#123BB1</color>
     <color name="share_bullet_1">#FFC107</color>
     <color name="share_bullet_2">#4CAF50</color>

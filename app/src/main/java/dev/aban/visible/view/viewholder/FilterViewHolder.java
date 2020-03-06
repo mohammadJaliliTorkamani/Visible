@@ -1,6 +1,5 @@
 package dev.aban.visible.view.viewholder;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -33,7 +32,6 @@ public class FilterViewHolder extends RecyclerView.ViewHolder implements View.On
         this.item = item;
         Picasso.get().load(item.getImageURL()).into(image);
         textViewPlus.setText(item.getTitle());
-        textViewPlus.setTextColor(Color.parseColor(item.isPermittedToUse() ? "#000000" : "#FFA3A3A3"));
 
     }
 

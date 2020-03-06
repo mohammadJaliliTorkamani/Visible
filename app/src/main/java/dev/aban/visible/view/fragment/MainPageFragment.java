@@ -1,6 +1,7 @@
 package dev.aban.visible.view.fragment;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 
@@ -74,6 +76,7 @@ import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.FlipAnimation;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
+import ir.tapsell.sdk.bannerads.TapsellBannerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,6 +99,7 @@ public class MainPageFragment extends Fragment implements
     private TextViewPlus getPRO;
     private ImageView developerImage;
     private TextViewPlus header_name;
+    private TextViewPlus no_filter;
     private ImageView header_shineview;
 
     private RecyclerView drawer_rv;
@@ -108,6 +112,7 @@ public class MainPageFragment extends Fragment implements
     private RecyclerView.Adapter dialog_adapter;
     private RecyclerView.LayoutManager dialog_layout_manager;
     private Dialog dialog_dialog;
+    private TapsellBannerView dialog_banner;
 
     private Handler main_handler;
     private Handler handler;
@@ -158,8 +163,14 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void initialize() {
+        initializeViewProperties();
         initializeDrawer();
         initDialog();
+    }
+
+    private void initializeViewProperties() {
+        no_filter.setVisibility(View.VISIBLE);
+        capture.setVisibility(View.GONE);
     }
 
     private void startAnimations() {
@@ -200,12 +211,14 @@ public class MainPageFragment extends Fragment implements
         dialog_marketContainer = view.findViewById(R.id.dialog_filter_bubble_market);
         dialog_RV_empty = view.findViewById(R.id.dialog_filter_rv_empty);
         dialog_RV = view.findViewById(R.id.dialog_filter_rv);
+        dialog_banner = view.findViewById(R.id.dialog_filter_banner);
 
         dialog_RV.setHasFixedSize(true);
         dialog_layout_manager = new GridLayoutManager(ContextHelper.retrieveContext(), 3, RecyclerView.VERTICAL, false);
         dialog_RV.setLayoutManager(dialog_layout_manager);
 
         dialog_dialog = builder.create();
+        dialog_dialog.getWindow().setWindowAnimations(R.style.DialogAnimation);
         dialog_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog_dialog.setOnDismissListener(dialog1 -> animator.start());
         dialog_dialog.setOnShowListener(dialog1 -> animator.pause());
@@ -215,30 +228,39 @@ public class MainPageFragment extends Fragment implements
             Helper.simpleAddFragment(getFragmentManager(), new MarketFragment());
             dialog_dialog.dismiss();
         });
-        dialog_adapter = new FilterAdapter(bubbleItems, item -> {
-            if (currentFilter != item) {
-                currentFilter = item;
-                permitToDetect = true;
-                setFragment();
-                dialog_dialog.dismiss();
-            }
-        }, dialog_dialog);
+        dialog_adapter = new FilterAdapter(bubbleItems, item -> Dexter.withActivity(getActivity())
+                .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()) {
+                            no_filter.setVisibility(View.GONE);
+                            capture.setVisibility(View.VISIBLE);
+                            if (currentFilter != item) {
+                                currentFilter = item;
+                                permitToDetect = true;
+                                setFragment();
+                                dialog_dialog.dismiss();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).withErrorListener(error -> Log.d(Constants.TAG, "Error while get permission")).check(), dialog_dialog);
 
         dialog_RV.setAdapter(dialog_adapter);
     }
 
     private void startFilterRotateAnimation() {
-        animator = ValueAnimator.ofFloat(1F, 0.8F);
-        animator.setDuration(4000);
+        animator = ObjectAnimator.ofFloat(filter, View.ROTATION, 0, 360f);
+        animator.setRepeatMode(ValueAnimator.RESTART);
+        animator.setInterpolator(new LinearInterpolator());
         animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setRepeatMode(ValueAnimator.REVERSE);
-        animator.addUpdateListener(animation -> {
-            float scale = (float) animation.getAnimatedValue();
-            filter.setScaleX(scale);
-            filter.setScaleY(scale);
-            filter.setRotation(filter.getRotation() + 2);
-        });
-        animator.start();
+        animator.setDuration(2000).start();
+
     }
 
     private void onPreviewSizeChosen(final Size size, final int rotation) {
@@ -335,14 +357,14 @@ public class MainPageFragment extends Fragment implements
                 Helper.simpleAddFragment(getFragmentManager(), new DonateFragment());
                 break;
             case 3:
-                Helper.simpleAddFragment(getFragmentManager(), new AboutFragment());
-                break;
-            case 4:
                 Helper.simpleAddFragment(getFragmentManager(), new MoreFragment());
                 break;
-            case 5:
+            case 4:
                 Helper.recordEventClick("MainpageFragment", "ShareApp");
                 Helper.shareApp();
+                break;
+            case 5:
+                Helper.simpleAddFragment(getFragmentManager(), new AboutFragment());
                 break;
         }
     }
@@ -354,10 +376,12 @@ public class MainPageFragment extends Fragment implements
         filter.setOnClickListener(this);
         capture.setOnClickListener(this);
         changeCamera.setOnClickListener(this);
+        no_filter.setOnClickListener(this);
         drawerLayout.addDrawerListener(this);
     }
 
     private void findViews() {
+        no_filter = view.findViewById(R.id.fragment_main_no_filter);
         header_shineview = view.findViewById(R.id.fragment_main_shine_imageview);
         header_name = view.findViewById(R.id.fragment_main_header_name);
         expand = view.findViewById(R.id.fragment_main_toolbar_expand_iv);
@@ -399,27 +423,47 @@ public class MainPageFragment extends Fragment implements
             case R.id.fragment_main_capture:
                 Helper.recordEventClick("MainpageFragment", "Capture");
                 if (currentFilter == null)
-                    Helper.showToast(getActivity(), "Select Bubble to turn on the camera !");
-                else {
-                    capture.startAnimation(Constants.FAST_SCALE_ANIMATION);
-                    new AudioPlayer().play(R.raw.capture_sound);
-                    Helper.showToast(getActivity(), "Coming soon !");
-                }
+                    return;
+                capture.startAnimation(Constants.FAST_SCALE_ANIMATION);
+                new AudioPlayer().play(R.raw.capture_sound);
+                Helper.showToast(getActivity(), "به زودی");
+
+                break;
+            case R.id.fragment_main_no_filter:
+                noFilterHandle();
                 break;
         }
+    }
+
+    private void noFilterHandle() {
+        filter.callOnClick();
     }
 
     private void cameraChangeHandle() {
         toggleCameraType();
         FlipAnimation flipAnimation = new FlipAnimation(changeCamera, changeCamera);
+        flipAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                setFragment();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
         if (changeCamera.getVisibility() == View.GONE) {
             flipAnimation.reverse();
             changeCamera.startAnimation(flipAnimation);
         } else {
             changeCamera.startAnimation(flipAnimation);
         }
-
-        setFragment();
     }
 
     private void toggleCameraType() {
@@ -427,45 +471,33 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void filterHandle() {
-        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
+        showDialog();
+
+        ServiceGenerator.getInstance().createService(ClientApi.class).getCurrentItems().enqueue(new Callback<List<BubbleItem>>() {
             @Override
-            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (report.areAllPermissionsGranted()) {
-                    showDialog();
-
-                    ServiceGenerator.getInstance().createService(ClientApi.class).getCurrentItems().enqueue(new Callback<List<BubbleItem>>() {
-                        @Override
-                        public void onResponse(Call<List<BubbleItem>> call, Response<List<BubbleItem>> response) {
-                            if (response.body() != null) {
-                                bubbleItems.clear();
-                                bubbleItems.addAll(BubbleItem.getLocallyExistBubbleItems(response.body()));
-                                displayAvailablesEmpty(bubbleItems.isEmpty());
-                                if (bubbleItems.isEmpty()) {
-                                    permitToDetect = false;
-                                } else {
-                                    dialog_adapter.notifyDataSetChanged();
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<BubbleItem>> call, Throwable t) {
-                            Log.d(Constants.TAG, t.getMessage());
-                        }
-                    });
+            public void onResponse(Call<List<BubbleItem>> call, Response<List<BubbleItem>> response) {
+                if (response.body() != null) {
+                    bubbleItems.clear();
+                    bubbleItems.addAll(BubbleItem.getLocallyExistBubbleItems(response.body()));
+                    displayAvailablesEmpty(bubbleItems.isEmpty());
+                    if (bubbleItems.isEmpty()) {
+                        permitToDetect = false;
+                    } else {
+                        dialog_adapter.notifyDataSetChanged();
+                    }
                 }
             }
 
             @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                token.continuePermissionRequest();
+            public void onFailure(Call<List<BubbleItem>> call, Throwable t) {
+                Log.d(Constants.TAG, t.getMessage());
             }
-        }).withErrorListener(error -> Log.d(Constants.TAG, "Error while get permission")).check();
+        });
     }
 
     private void showDialog() {
-        dialog_dialog.show();
+        if (!dialog_dialog.isShowing())
+            dialog_dialog.show();
     }
 
     private void expandHandle() {
@@ -478,7 +510,7 @@ public class MainPageFragment extends Fragment implements
     public synchronized void onPause() {
 
         if (!getActivity().isFinishing()) {
-            getActivity().finish();
+//            getActivity().finish();
         }
 
         handlerThread.quitSafely();

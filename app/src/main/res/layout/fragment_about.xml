@@ -201,6 +201,13 @@
                     app:layout_constraintTop_toTopOf="@+id/fragment_about_linkedin_label" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <ir.tapsell.sdk.bannerads.TapsellBannerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                app:tapsell_banner_type="banner_320x50"
+                app:tapsell_zone_id="5e6109801481a9000164b84a" />
         </LinearLayout>
 
     </ScrollView>

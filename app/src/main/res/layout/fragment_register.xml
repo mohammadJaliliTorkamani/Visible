@@ -318,8 +318,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fragment_register_gender_container"
-            app:layout_constraintVertical_bias="0.582"
-            app:layout_goneMarginTop="12dp">
+            app:layout_constraintVertical_bias="0.582">
 
 
             <dev.aban.visible.utils.custom_view.TextViewPlus

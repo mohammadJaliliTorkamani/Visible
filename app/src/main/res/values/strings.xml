@@ -23,7 +23,6 @@
     <string name="about_us_content">یک برنامه هوش مصنوعی که به شما در پیدا کردن اجسام دلخواه کمک میکند !</string>
     <string name="gmail_value">mohammad.jalili.torkamani@gmail.com</string>
     <string name="donate_us">حمایت از ما</string>
-    <string name="donate">حمایت</string>
     <string name="save">ذخیره</string>
     <string name="enter_full_name">نام خود را وارد کنید</string>
     <string name="current_features">حباب های شما</string>
@@ -55,4 +54,6 @@
     <string name="select_bubble">انتخاب حباب</string>
     <string name="download">دانلود</string>
     <string name="password_min_8_digit">گذرواژه حداقل هشت رقمی</string>
+    <string name="donate_text">ما را حمایت کنیییید</string>
+    <string name="purchase_not_supported">عملیات پرداخت پشتیبانی نمیشود</string>
 </resources>

@@ -111,7 +111,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:paddingTop="16dp"
+                        android:id="@+id/setting_general_bubble_sound_container"
+                        android:layout_marginTop="4dp"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/setting_general_view">
@@ -298,7 +301,18 @@
             </com.loopeer.shadow.ShadowView>
 
 
+            <ir.tapsell.sdk.bannerads.TapsellBannerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fragment_setting_version"
+                app:tapsell_banner_type="banner_320x50"
+                app:tapsell_zone_id="5e61078f7857250001105097" />
+
             <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:id="@+id/fragment_setting_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -307,7 +321,6 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="12sp"
                 app:bold="true"
-
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/setting_authority_card" />

@@ -1,6 +1,6 @@
 package dev.aban.visible.listener;
 
-public interface OnExecutePayment {
+public interface OnExecuteSavedPayment {
     void onSuccessPayment(String ITN);
 
     void onFailedPayment(String error);

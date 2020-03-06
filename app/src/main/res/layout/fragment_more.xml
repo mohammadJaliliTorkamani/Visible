@@ -29,7 +29,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/more_apps_banner"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/more_apps_title" />
@@ -40,9 +40,19 @@
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/more_apps_banner"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/more_apps_title" />
+
+    <ir.tapsell.sdk.bannerads.TapsellBannerView
+        android:id="@+id/more_apps_banner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tapsell_banner_type="banner_320x50"
+        app:tapsell_zone_id="5e610d531481a9000164b855" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

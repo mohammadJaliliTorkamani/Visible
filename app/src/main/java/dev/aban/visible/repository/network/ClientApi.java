@@ -64,15 +64,8 @@ public interface ClientApi {
     @GET("pb_weight_url.php")
     Call<WeightInfo> getWeightInfos(@Query("bubble_id") int id);
 
-    @POST("save_ITN.php")
-    @FormUrlEncoded
-    Call<ResponseBody> saveITN(@Field("itn") String itn, @Field("bubble_id") int bubbleID, float price);
-
     @GET("bubble.php")
     Call<BubbleItem> getBubbleInfo(@Query("bubble_id") int bubbleID);
-
-    @GET("save_donate.php")
-    Call<ResponseBody> saveDonationPayment(@Query("itn") String itn, @Query("selected_price") float selectedPrice);
 
     @GET("nag_screen_fa.php")
     Call<NagScreen> getNagScreen();
@@ -82,4 +75,16 @@ public interface ClientApi {
 
     @GET("is_user_exists.php")
     Call<RegisterResponse> isUserExists(@Query("phone") String phone, @Query("username") String username);
+
+    @GET("bubble_sku.php")
+    Call<ResponseBody> getBubbleSKU(@Query("bubble_id") int bubbleID);
+
+    @POST("save_purchase_info.php")
+    @FormUrlEncoded
+    Call<ResponseBody> saveBubblePurchaseInfo(@Field("bubble_id") int bubbleID,
+                                              @Field("purchase_time") long purchaseTime,
+                                              @Field("purchase_token") String token,
+                                              @Field("signature") String signature,
+                                              @Field("original_json") String originalJson,
+                                              @Field("order_id") String orderId);
 }

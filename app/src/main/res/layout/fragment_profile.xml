@@ -34,6 +34,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical|right"
             android:padding="17dp"
+            android:scaleX="-1"
             android:src="@drawable/ic_back_black" />
 
         <dev.aban.visible.utils.custom_view.TextViewPlus
@@ -99,8 +100,9 @@
                 android:layout_gravity="left|center_vertical"
                 android:layout_marginTop="12dp"
                 android:background="@color/light_gray"
-                android:gravity="center_vertical|right"
+                android:gravity="center_vertical|left"
                 android:maxLines="1"
+                android:hint="09XX XXXXXXX"
                 android:paddingLeft="@dimen/normal_button_padding"
                 android:paddingRight="@dimen/normal_button_padding"
                 android:textSize="13sp" />
@@ -157,7 +159,7 @@
                     android:textColor="@android:color/black"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <dev.aban.visible.utils.custom_view.EditTextPlus
@@ -176,8 +178,8 @@
                     android:textColor="@android:color/black"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/fragment_profile_birthday_day"
-                    app:layout_constraintRight_toLeftOf="@+id/fragment_profile_birthday_year"
+                    app:layout_constraintLeft_toRightOf="@+id/fragment_profile_birthday_year"
+                    app:layout_constraintRight_toLeftOf="@id/fragment_profile_birthday_day"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <dev.aban.visible.utils.custom_view.EditTextPlus
@@ -196,10 +198,20 @@
                     android:textColor="@android:color/black"
                     android:textSize="12sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <ir.tapsell.sdk.bannerads.TapsellBannerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                app:tapsell_banner_type="banner_320x50"
+                app:tapsell_zone_id="5e610b9e1481a9000164b854" />
+
         </LinearLayout>
 
     </ScrollView>

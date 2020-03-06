@@ -33,7 +33,7 @@ public class StoreSellBubbleViewHolder extends RecyclerView.ViewHolder implement
     }
 
     private void bindValues() {
-        title.setText(bubbleItem.getTitle());
+        title.setText(bubbleItem.getTitle() + (bubbleItem.getPrice() == 0 ? " ( رایگان ! ) " : ""));
         Picasso.get().load(bubbleItem.getImageURL()).into(image);
     }
 

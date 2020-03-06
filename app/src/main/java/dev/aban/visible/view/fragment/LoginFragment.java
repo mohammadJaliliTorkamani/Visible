@@ -1,6 +1,7 @@
 package dev.aban.visible.view.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import dev.aban.visible.R;
 import dev.aban.visible.model.LoginResponse;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
+import dev.aban.visible.utils.BazaarPurchase;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.EditTextPlus;
@@ -107,10 +109,23 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         if (response.body().isSuccessful()) {
                             Helper.saveSetting(Constants._TABLE_USER, Constants._KEY_LOGIN_STATE, "true");
                             Helper.saveSetting(Constants._TABLE_PROFILE, Constants._KEY_TOKEN, response.body().getToken());
-                            getFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.activity_main_container, new MainPageFragment())
-                                    .commitAllowingStateLoss();
+                            try {
+                                BazaarPurchase.getInstance().getHelper().startSetup(result -> {
+                                    Log.d(Constants.TAG, "Setup finished.");
+                                    if (result.isSuccess()) {
+                                        getFragmentManager()
+                                                .beginTransaction()
+                                                .replace(R.id.activity_main_container, new MainPageFragment())
+                                                .commitAllowingStateLoss();
+                                    } else {
+                                        Log.d(Constants.TAG, "Problem setting up In-app Billing: " + result);
+                                        Helper.showToast(getActivity(), R.string.purchase_not_supported);
+                                    }
+
+                                });
+                            } catch (Exception e) {
+                                Log.d(Constants.TAG, e.getMessage());
+                            }
                         } else {
                             visibleLoginText(true);
                             Helper.showToast(getActivity(), R.string.wrong_information);

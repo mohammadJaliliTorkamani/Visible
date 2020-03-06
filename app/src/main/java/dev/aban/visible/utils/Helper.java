@@ -44,14 +44,12 @@ import java.util.Map;
 
 import dev.aban.visible.R;
 import dev.aban.visible.listener.DownloadingListener;
-import dev.aban.visible.listener.OnExecutePayment;
+import dev.aban.visible.listener.OnExecuteSavedPayment;
 import dev.aban.visible.model.BubbleItem;
 import dev.aban.visible.model.DrawerItem;
-import dev.aban.visible.model.SettingOption;
 import dev.aban.visible.model.WeightInfo;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -99,9 +97,9 @@ public class Helper {
         list.add(new DrawerItem(0, R.string.bubble_menu, R.drawable.ic_markets));
         list.add(new DrawerItem(1, R.string.setting, R.drawable.ic_setting_gear));
         list.add(new DrawerItem(2, R.string.donate_us, R.drawable.ic_heart));
-        list.add(new DrawerItem(3, R.string.about_us, R.drawable.ic_about_us));
-        list.add(new DrawerItem(4, R.string.more_apps, R.drawable.ic_app));
-        list.add(new DrawerItem(5, R.string.share_app, R.drawable.ic_sharee));
+        list.add(new DrawerItem(3, R.string.more_apps, R.drawable.ic_app));
+        list.add(new DrawerItem(4, R.string.share_app, R.drawable.ic_sharee));
+        list.add(new DrawerItem(5, R.string.about_us, R.drawable.ic_about_us));
         return list;
     }
 
@@ -116,65 +114,11 @@ public class Helper {
     /**
      * includes purchase + save into server
      *
-     * @param price
      * @param bubbleID
      * @param afterPurchase
      */
-    public static void bubblePurchase(float price, int bubbleID, OnExecutePayment afterPurchase) {
-        if (price > 0) {
-            // TODO: 2/27/20  implement following statements in onSuccess of payment  and suppose moch ITN is '1234dd'.... DO NOT FORGET TO USE ONEXECUTEPAYMENT AGAIN....
-        }
-
-        String ITN = "1234566";
-        ServiceGenerator.getInstance().createService(ClientApi.class).saveITN(ITN, bubbleID, price).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.body() != null) {
-                    afterPurchase.onSuccessPayment(ITN);
-                } else {
-                    afterPurchase.onFailedPayment("error in saving purchase item : " + ITN);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                afterPurchase.onFailedPayment("error in saving purchase item : " + ITN + " ," + t.getMessage());
-            }
-        });
-    }
-
-    /**
-     * includes purchase + save into server
-     *
-     * @param selectedPrice
-     * @param afterPurchase
-     */
-    public static void donatePurchase(float selectedPrice, OnExecutePayment afterPurchase) {
-        // TODO: 2/28/20   do payment operation and save it in server and then execute @onExecutePayment.... DO NOT FORGET TO USE ONEXECUTEPAYMENT AGAIN....
-        String ITN = "1234566";
-        ServiceGenerator.getInstance().createService(ClientApi.class)
-                .saveDonationPayment(ITN, selectedPrice).enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.body() != null) {
-                    afterPurchase.onSuccessPayment(ITN);
-                } else {
-                    afterPurchase.onFailedPayment("error in saving purchase item : " + ITN);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                afterPurchase.onFailedPayment("error in saving donate purchase item saving : " + ITN + " , " + t.getMessage());
-            }
-        });
-    }
-
-    public static List<SettingOption> getAvailableLanguages() {
-        List<SettingOption> list = new LinkedList<>();
-        list.add(new SettingOption("English", "en"));
-        list.add(new SettingOption("فارسی", "fa"));
-        return list;
+    public static void bubblePurchase(Activity activity, int bubbleID, OnExecuteSavedPayment afterPurchase) {
+        BazaarPurchase.getInstance().purchaseBubbleItem(activity, bubbleID, afterPurchase);
     }
 
     public static void logout() {
@@ -251,7 +195,7 @@ public class Helper {
 
     public static void showToast(final Activity activity, @StringRes final int text) {
         if (activity != null) {
-            activity.runOnUiThread(() -> Toast.makeText(activity, text, Toast.LENGTH_SHORT).show());
+            showToast(activity, ContextHelper.retrieveContext().getString(text));
         }
     }
 
@@ -259,7 +203,7 @@ public class Helper {
         downloadedItemsOfaBubble = 0;
         final DownloadManager downloadManager = DownloadService.getDownloadManager(ContextHelper.retrieveContext().getApplicationContext());
 
-        if (downloadMode == Constants.DownloadMode.BOTH_FILES || downloadMode == Constants.DownloadMode.JUST_FREEZE) {
+        if (downloadMode == Constants.DownloadMode.BOTH_FILES || downloadMode == Constants.DownloadMode.JUST_LABELS) {
             ServiceGenerator.getInstance().createService(ClientApi.class).getWeightInfos(item.getId()).enqueue(new Callback<WeightInfo>() {
                 @Override
                 public void onResponse(Call<WeightInfo> call, Response<WeightInfo> response) {
@@ -286,7 +230,8 @@ public class Helper {
 
                             @Override
                             public void onDownloading(long progress, long size) {
-                                downloadingListener.OnDownloading(1.0f * progress / size);
+                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 1) || (downloadMode == Constants.DownloadMode.JUST_LABELS)) //if has downloaded one (at least) or just wants the labels file
+                                    downloadingListener.OnDownloading(1.0f * progress / size);
                             }
 
                             @Override
@@ -296,8 +241,8 @@ public class Helper {
 
                             @Override
                             public void onDownloadSuccess() {
-                                downloadedItemsOfaBubble++;
-                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 2) || (downloadMode == Constants.DownloadMode.JUST_FREEZE))
+                                ++downloadedItemsOfaBubble;
+                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 2) || (downloadMode == Constants.DownloadMode.JUST_LABELS))
                                     onAfterStore.run();
                             }
 
@@ -317,7 +262,7 @@ public class Helper {
             });
         }
 
-        if (downloadMode == Constants.DownloadMode.BOTH_FILES || downloadMode == Constants.DownloadMode.JUST_LABELS) {
+        if (downloadMode == Constants.DownloadMode.BOTH_FILES || downloadMode == Constants.DownloadMode.JUST_FROZEN_WEIGHT) {
             ServiceGenerator.getInstance().createService(ClientApi.class).getWeightInfos(item.getId()).enqueue(new Callback<WeightInfo>() {
                 @Override
                 public void onResponse(Call<WeightInfo> call, Response<WeightInfo> response) {
@@ -344,7 +289,8 @@ public class Helper {
 
                             @Override
                             public void onDownloading(long progress, long size) {
-                                downloadingListener.OnDownloading(1f * progress / size);
+                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 1) || (downloadMode == Constants.DownloadMode.JUST_FROZEN_WEIGHT))//if has downloaded one (at least) or just wants the frozen weight file
+                                    downloadingListener.OnDownloading(1f * progress / size);
                             }
 
                             @Override
@@ -354,8 +300,8 @@ public class Helper {
 
                             @Override
                             public void onDownloadSuccess() {
-                                downloadedItemsOfaBubble++;
-                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 2) || (downloadMode == Constants.DownloadMode.JUST_LABELS))
+                                ++downloadedItemsOfaBubble;
+                                if ((downloadMode == Constants.DownloadMode.BOTH_FILES && downloadedItemsOfaBubble == 2) || (downloadMode == Constants.DownloadMode.JUST_FROZEN_WEIGHT))
                                     onAfterStore.run();
                             }
 

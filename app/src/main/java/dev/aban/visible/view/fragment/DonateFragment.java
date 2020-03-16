@@ -34,7 +34,6 @@ public class DonateFragment extends Fragment {
     }
 
     private void initialize() {
-        Helper.recordEventView("DonateFragment");
     }
 
     private void findViews() {

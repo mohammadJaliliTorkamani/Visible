@@ -116,7 +116,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         BazaarPurchase.getInstance().disposePurchase();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(Constants.TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data + ")");
+        // Pass on the activity result to the helper for handling
+        if (!BazaarPurchase.getInstance().getHelper().handleActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        } else {
+            Log.d(Constants.TAG, "onActivityResult handled by IABUtil.");
+        }
     }
 }

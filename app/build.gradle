@@ -7,8 +7,8 @@ android {
         applicationId "dev.aban.visible"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 5
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "FLURRY_KEY", "\"3HXGQRNTGBPNRKT42Y46\""
@@ -110,11 +110,8 @@ dependencies {
     implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     implementation "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
 
-    //flurry
-    implementation 'com.flurry.android:analytics:12.2.0@aar'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
-    //tapsell
+    //tap sell
     implementation 'ir.tapsell.sdk:tapsell-sdk-android:4.5.0'
 
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

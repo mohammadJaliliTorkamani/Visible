@@ -1,8 +1,8 @@
 package dev.aban.visible.view.fragment;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -22,6 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ixuea.android.downloader.DownloadService;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -36,7 +41,6 @@ import dev.aban.visible.listener.OnExecuteSavedPayment;
 import dev.aban.visible.model.BubbleItem;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
-import dev.aban.visible.utils.BazaarPurchase;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.Constants.DownloadMode;
 import dev.aban.visible.utils.ContextHelper;
@@ -79,8 +83,6 @@ public class MarketFragment extends Fragment {
     }
 
     private void initialize() {
-        Helper.recordEventView("MarketFragment");
-
         currentBubbles_layout_manager = new LinearLayoutManager(ContextHelper.retrieveContext(), RecyclerView.HORIZONTAL, false);
         sellBubbles_layout_manager = new GridLayoutManager(ContextHelper.retrieveContext(), 3, RecyclerView.VERTICAL, false);
 
@@ -90,9 +92,48 @@ public class MarketFragment extends Fragment {
         currentBubbles_rv.setLayoutManager(currentBubbles_layout_manager);
         sellBubbles_rv.setLayoutManager(sellBubbles_layout_manager);
 
-        currentBubbles_adapter = new StoreCurrentBubbleAdapter(currentBubbles, item -> showItemInfoDialog(item, false));
-        sellBubbles_adapter = new StoreSellBubbleAdapter(toSellBubbles, item -> showItemInfoDialog(item, true));
+        currentBubbles_adapter = new StoreCurrentBubbleAdapter(currentBubbles,
+                item -> Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                if (report.areAllPermissionsGranted()) {
+                                    showItemInfoDialog(item, false);
+                                } else {
+                                    Helper.showToast(getActivity(), "خطا در دریافت مجوز های مربوطه");
+                                }
+                            }
 
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        })
+                        .withErrorListener(error -> {
+                            Log.d(Constants.TAG, error.toString());
+                            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+                        }).check());
+        sellBubbles_adapter = new StoreSellBubbleAdapter(toSellBubbles,
+                item -> Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .withListener(new MultiplePermissionsListener() {
+                            @Override
+                            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                if (report.areAllPermissionsGranted()) {
+                                    showItemInfoDialog(item, true);
+                                } else {
+                                    Helper.showToast(getActivity(), "خطا در دریافت مجوز های مربوطه");
+                                }
+                            }
+
+                            @Override
+                            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                token.continuePermissionRequest();
+                            }
+                        })
+                        .withErrorListener(error -> {
+                            Log.d(Constants.TAG, error.toString());
+                            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+                        }).check());
         currentBubbles_rv.setAdapter(currentBubbles_adapter);
         sellBubbles_rv.setAdapter(sellBubbles_adapter);
 
@@ -181,7 +222,6 @@ public class MarketFragment extends Fragment {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
                                     buy.setClickable(false);
-                                    dialog.dismiss();
                                     Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
                                         @Override
                                         public void onSuccessPayment(String ITN) {
@@ -199,7 +239,6 @@ public class MarketFragment extends Fragment {
                             } else {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
-                                    buy.setClickable(false);
                                     downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
                                 });
                             }
@@ -207,9 +246,18 @@ public class MarketFragment extends Fragment {
                             if (mustPurchaseFirst) {
                                 Helper.deleteIllegalBubbleFile(bubbleItem);
                                 buy.setVisibility(View.VISIBLE);
-                                buy.setOnClickListener(v -> {
-                                    buy.setClickable(false);
-                                    downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
+                                Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
+                                    @Override
+                                    public void onSuccessPayment(String ITN) {
+                                        Log.d(Constants.TAG, ITN);
+                                        downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
+                                    }
+
+                                    @Override
+                                    public void onFailedPayment(String error) {
+                                        Log.d(Constants.TAG, error);
+                                        buy.setClickable(true);
+                                    }
                                 });
                             } else {
                                 buy.setVisibility(View.VISIBLE);
@@ -220,10 +268,23 @@ public class MarketFragment extends Fragment {
                             }
                         } else if (freezeExists && !labelsExists) {
                             if (mustPurchaseFirst) {
+                                Helper.deleteIllegalBubbleFile(bubbleItem);
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
                                     buy.setClickable(false);
-                                    downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
+                                    Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
+                                        @Override
+                                        public void onSuccessPayment(String ITN) {
+                                            Log.d(Constants.TAG, ITN);
+                                            downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
+                                        }
+
+                                        @Override
+                                        public void onFailedPayment(String error) {
+                                            Log.d(Constants.TAG, error);
+                                            buy.setClickable(true);
+                                        }
+                                    });
                                 });
                             } else {
                                 buy.setVisibility(View.VISIBLE);
@@ -249,7 +310,7 @@ public class MarketFragment extends Fragment {
                                         @Override
                                         public void onFailedPayment(String error) {
                                             Log.d(Constants.TAG, error);
-                                            buy.setClickable(false);
+                                            buy.setClickable(true);
                                         }
                                     });
                                 });
@@ -301,7 +362,6 @@ public class MarketFragment extends Fragment {
     }
 
     private void downloadItem(BubbleItem item, CircularMusicProgressBar logo, TextViewPlus buy, DownloadMode downloadMode) {
-        Helper.recordEventClick("ProfileFragment", "Download Item " + item.getTitle());
         Helper.showToast(getActivity(), "دانلود شروع شد");
         Helper.downloadItem(item, downloadMode, (progressPercentage) -> {
             Log.d(Constants.TAG, "" + progressPercentage);
@@ -342,16 +402,5 @@ public class MarketFragment extends Fragment {
     private void displayEmptySellContent(boolean displayEmpty) {
         sellBubbles_rv.setVisibility(!displayEmpty ? View.VISIBLE : View.GONE);
         sellBubbles_rv_empty.setVisibility(displayEmpty ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(Constants.TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data + ")");
-        // Pass on the activity result to the helper for handling
-        if (!BazaarPurchase.getInstance().getHelper().handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        } else {
-            Log.d(Constants.TAG, "onActivityResult handled by IABUtil.");
-        }
     }
 }

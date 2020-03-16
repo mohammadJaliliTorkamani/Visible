@@ -41,7 +41,6 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
             view = inflater.inflate(R.layout.fragment_about, container, false);
         findViews();
         initialize();
-        Helper.recordEventView("AboutFragment");
         startAnimations();
         manageListeners();
         return view;
@@ -87,11 +86,9 @@ public class AboutFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_about_gmail_value:
-                Helper.recordEventClick("AboutFragment", "Gmail Value");
                 gmailHandle();
                 break;
             case R.id.fragment_about_linkedin_value:
-                Helper.recordEventClick("AboutFragment", "Linkedin Value");
                 linkedInHandle();
                 break;
         }

@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.view.animation.AnimationUtils;
 
-import com.flurry.android.FlurryAgent;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -30,10 +29,6 @@ public class ContextHelper extends Application {
         super.onCreate();
         context = getApplicationContext();
         PushPole.initialize(this, false);
-        new FlurryAgent.Builder()
-                .withLogEnabled(true)
-                .build(this, BuildConfig.FLURRY_KEY);
-        FlurryAgent.setUserId(PushPole.getId(this));
         AppCenter.start(this, BuildConfig.APPCENTER, Analytics.class, Crashes.class);
         Tapsell.initialize(this, BuildConfig.TAPSELL_KEY);
         initConstantObjects();

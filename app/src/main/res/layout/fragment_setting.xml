@@ -64,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 app:cornerRadius="8dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -107,12 +107,12 @@
                         app:layout_constraintTop_toBottomOf="@+id/setting_general" />
 
                     <androidx.coordinatorlayout.widget.CoordinatorLayout
+                        android:id="@+id/setting_general_bubble_sound_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:id="@+id/setting_general_bubble_sound_container"
                         android:layout_marginTop="4dp"
+                        android:layout_marginRight="16dp"
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         app:layout_constraintLeft_toLeftOf="parent"

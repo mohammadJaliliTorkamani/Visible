@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp">
+
+    <dev.aban.visible.utils.custom_view.TextViewPlus
+        android:id="@+id/dialog_policy_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ضوابط ثبت نام"
+        android:textColor="@android:color/black"
+        android:textSize="19sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="360dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@id/dialog_policy_accept"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_policy_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="تعریف"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="ویزیبل یک برنامه تفریحی بر مبنای هوش مصنوعی و شاخه پردازش تصویر بوده که از جدید ترین تکنولوژی های ارایه شده در هوش مصنوعی استفاده میکند"
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="خلاصه عملکرد"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="برنامه ویزیبل با دریافت فریم تصاویر به صورت لحظه ای و آفلاین ، اقدام به شناسایی اجسام موجود در فریم تصویر کرده و با ترسیم مستطیل احاظه کننده ی آن جسم ، نام آنرا نیز در گوشه ی مستطیل قرار میدهد. این برنامه دارای فیلتر های رایگان و غیر رایگان متفاوتی میباشد که دایما توسط تیم سازنده برنامه بهبود و افزوده میگردد. ضمن اینکه تمامی عملیات پرداخت بانکی و درون برنامه ای توسط کافه بازار ارایه شده و تنها عملیات یادداشت برداری از شماره پیگیری بانکی و سایر مشخصات پرداخت به جهت ارایه فیلتر های مورد نظر به کاربر توسط برنامه ویزیبل در سرور توسط برنامه انجام میشود."
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="ضوابط استفاده از اپلیکیشن"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="ثبت نام کلیه کاربران حقیقی و حقوقی برنامه ویزیبل به معنای پذیرش ضوابط قید شده ذیل می باشد : "
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="۱. عدم استفاده از برنامه در جهت اهداف شخصی به طوری که در خلاف جهت منافع دیگر کاربران برنامه به طور مستقیم یا غیر مستقیم باشد. \n۲. عدم استفاده از ابزار های مهندسی معکوس به جهت دستیابی به سورس کد برنامه. \n۳.ارایه اطلاعات صحیح و معتبر در ثبت نام \n۴. عدم انجام هر گونه تلاش به جهت وارد کردن خسارت های مستقیم یا غیر مستقیم به تجهیزات و امکانات فنی ویزیبل مانند سرور ها \n۵. عدم انجام هر گونه تلاش در جهت بدست آوردن اطلاعات سایر کاربران به طور غیر قانونی"
+                android:textColor="#202020"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="ثبت نام برنامه"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="این قسمت شامل دریافت اطلاعات اولیه ی مورد نیاز برای ثبت کاربر و ارایه خدمات فعلی و آینده می باشد. کاربر باید جهت ثبت نام در برنامه اطلاعاتی نظیر نام کامل ، شماره تلفن به جهت ارسال کد تایید ، نام کاربری ، رمز عبور ، تصویر حساب کاربری ، جنسیت و تاریخ تولد خود را وارد کرده و در صورت صحیح بودن مقادیر ورودی ، با وارد کردن کد فعالسازی چهار رقمی ارسال شده به شماره تلفن وارد شده ، نسبت به ورود اقدام نماید."
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="دسترسی های مورد نیاز"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="به طور کلی با توجه به عملکرد هر قسمت از برنامه ، در صورت عدم دریافت دسترسی ، از کاربر نسبت به دریافت آن دسترسی درخواست میگردد . از جمله مهم ترین این دسترسی ها به دسترسی دوربین به جهت اسکن تصاویر و هم چنین دسترسی خواندن فایل به جهت شناسایی فایل های تنظیماتی خاص ویزیبل و هم چنین دسترسی نوشتن فایل به جهت ذخیره فایل های دانلود شده میتوان اشاره کرد. ویزیبل این اطمینان را به کاربر میدهد که از دسترسی های گرفته شده تنها در جهت ارایه خدمت مربوطه استفاده کند و تا حد امکان هیچ اتلاف عملکردی نداشته باشد."
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="right"
+                android:lineSpacingExtra="2dp"
+                android:text="ارتباط با پشتیبانی"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:bold="true" />
+
+            <dev.aban.visible.utils.custom_view.TextViewPlus
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
+                android:lineSpacingExtra="6dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="کلیه کاربران در صورت نیاز به برقراری ارتباط با تیم پشتیبانی ، میتوانند با آدرس ایمیل موجود در قسمت توسعه دهنده ی ویزیبل ، در برنامه کافه بازار و یا برنامه ویزیبل  مکاتبه داشته باشند. تیم ویزیبل این اطمینان را به کاربران میدهد که در اولین فرصت اقدام به پیگیری اختصاصی درخواست ها ، پیشنهادات ، نظرات و شکایات کاربران داشته باشد."
+                android:textColor="#585858"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <dev.aban.visible.utils.custom_view.TextViewPlus
+        android:id="@+id/dialog_policy_accept"
+        android:layout_width="300dp"
+        android:layout_height="55dp"
+        android:background="@drawable/accent_round_color"
+        android:gravity="center"
+        android:text="کلیه قوانین را خوانده و میپذیرم"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

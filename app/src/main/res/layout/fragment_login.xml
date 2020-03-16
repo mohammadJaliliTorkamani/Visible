@@ -100,6 +100,25 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
+        <dev.aban.visible.utils.custom_view.TextViewPlus
+            android:id="@+id/fragment_login_recover_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="12dp"
+            android:fontFamily="syekan.otf"
+            android:gravity="center"
+            android:paddingLeft="4dp"
+            android:paddingTop="2dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="4dp"
+            android:text="@string/recover_password"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            app:bold="true"
+            app:layout_constraintLeft_toLeftOf="@id/fragment_login_btn_container"
+            app:layout_constraintTop_toBottomOf="@id/fragment_login_btn_container"
+            app:underline="true" />
 
         <dev.aban.visible.utils.custom_view.TextViewPlus
             android:id="@+id/fragment_login_create_account_question"

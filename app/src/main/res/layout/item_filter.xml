@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:background="@drawable/filter_border_item"
     android:layoutDirection="ltr">
 
     <LinearLayout
@@ -19,13 +18,17 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/item_filter_image"
             android:layout_width="match_parent"
+            android:padding="4dp"
             android:layout_height="0dp"
             android:layout_margin="1dp"
             android:layout_weight="81"
             android:scaleType="centerCrop"
+            android:src="@android:color/white"
+            app:civ_border_color="@color/borders_color"
+            app:civ_border_width="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -41,12 +44,12 @@
             android:layout_marginEnd="1dp"
             android:layout_marginBottom="1dp"
             android:layout_weight="19"
-            android:background="@color/colorAccent"
-            android:textColor="@android:color/white"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/white"
+            android:textColor="@color/borders_color"
             android:gravity="center"
             android:maxLines="1"
-            android:textSize="14sp"
-            app:bold="true"
+            android:textSize="13sp"
             app:layout_constraintLeft_toLeftOf="@id/item_filter_image"
             app:layout_constraintRight_toRightOf="@+id/item_filter_image"
             app:layout_constraintTop_toBottomOf="@id/item_filter_image" />

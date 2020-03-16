@@ -20,7 +20,6 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.flurry.android.FlurryAgent;
 import com.ixuea.android.downloader.DownloadService;
 import com.ixuea.android.downloader.callback.DownloadListener;
 import com.ixuea.android.downloader.callback.DownloadManager;
@@ -379,27 +378,22 @@ public class Helper {
 
     public static void shareApp() {
         try {
-            Intent sendIntent = new Intent();
-            sendIntent.setAction(Intent.ACTION_SEND);
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "اشتراک گذاری برنامه");
             sendIntent.putExtra(Intent.EXTRA_TEXT, ContextHelper.retrieveContext().getString(R.string.share_app_prefix) +
-                    "market://details?id=" + ContextHelper.retrieveContext().getPackageName());
+                    "\n http://cafebazaar.ir/app/?id=" + ContextHelper.retrieveContext().getPackageName());
             sendIntent.setType("text/plain");
             ContextHelper.retrieveContext().startActivity(sendIntent);
         } catch (Exception e) {
-            Log.d(Constants.TAG, "Error");
+            Log.d(Constants.TAG, "Error while sharing " + e.getMessage());
         }
     }
 
     public static void recordEventClick(String containerPage, String clickedViewName) {
         Map<String, String> map = new HashMap<>();
         map.put(containerPage, clickedViewName + " clicked");
-        FlurryAgent.logEvent("Click event", map);
         Analytics.trackEvent(clickedViewName + " clicked in " + containerPage);
-    }
-
-    public static void recordEventView(String pageName) {
-        FlurryAgent.logEvent(pageName + " viewed");
-        Analytics.trackEvent(pageName + " viewed");
     }
 
     public static void getProVersion() {

@@ -49,7 +49,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initialize() {
-        Helper.recordEventView("ProfileFragment");
         ServiceGenerator.getInstance().createService(ClientApi.class).getUserProfile().enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

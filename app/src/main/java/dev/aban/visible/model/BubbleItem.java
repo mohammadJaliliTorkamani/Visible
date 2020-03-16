@@ -14,11 +14,13 @@ public class BubbleItem {
     private String imageURL;
     private float price;
     private int id;
+    private String sku;
     private boolean permittedToUse;
     private List<String> pictures;
 
-    public BubbleItem(String title, String description, String imageURL, float price, int id, boolean permittedToUse, List<String> pictures) {
+    public BubbleItem(String title, String description, String sku, String imageURL, float price, int id, boolean permittedToUse, List<String> pictures) {
         this.title = title;
+        this.sku = sku;
         this.description = description;
         this.imageURL = imageURL;
         this.price = price;
@@ -106,6 +108,14 @@ public class BubbleItem {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     @Override

@@ -76,7 +76,6 @@ import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.FlipAnimation;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
-import ir.tapsell.sdk.bannerads.TapsellBannerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,7 +95,6 @@ public class MainPageFragment extends Fragment implements
     private ImageView capture;
     private ImageView changeCamera;
     private TextViewPlus developerName;
-    private TextViewPlus getPRO;
     private ImageView developerImage;
     private TextViewPlus header_name;
     private TextViewPlus no_filter;
@@ -112,7 +110,6 @@ public class MainPageFragment extends Fragment implements
     private RecyclerView.Adapter dialog_adapter;
     private RecyclerView.LayoutManager dialog_layout_manager;
     private Dialog dialog_dialog;
-    private TapsellBannerView dialog_banner;
 
     private Handler main_handler;
     private Handler handler;
@@ -154,7 +151,6 @@ public class MainPageFragment extends Fragment implements
         if (view == null)
             view = inflater.inflate(R.layout.fragment_main_page, container, false);
 
-        Helper.recordEventView("MainpageFragment");
         findViews();
         initialize();
         manageListeners();
@@ -211,7 +207,6 @@ public class MainPageFragment extends Fragment implements
         dialog_marketContainer = view.findViewById(R.id.dialog_filter_bubble_market);
         dialog_RV_empty = view.findViewById(R.id.dialog_filter_rv_empty);
         dialog_RV = view.findViewById(R.id.dialog_filter_rv);
-        dialog_banner = view.findViewById(R.id.dialog_filter_banner);
 
         dialog_RV.setHasFixedSize(true);
         dialog_layout_manager = new GridLayoutManager(ContextHelper.retrieveContext(), 3, RecyclerView.VERTICAL, false);
@@ -229,7 +224,7 @@ public class MainPageFragment extends Fragment implements
             dialog_dialog.dismiss();
         });
         dialog_adapter = new FilterAdapter(bubbleItems, item -> Dexter.withActivity(getActivity())
-                .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -370,7 +365,6 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void manageListeners() {
-        getPRO.setOnClickListener(this);
         developerImage.setOnClickListener(this);
         expand.setOnClickListener(this);
         filter.setOnClickListener(this);
@@ -389,7 +383,6 @@ public class MainPageFragment extends Fragment implements
         drawer_rv = view.findViewById(R.id.navigation_drawer_rv);
         developerName = view.findViewById(R.id.navigation_drawer_developer_name);
         developerImage = view.findViewById(R.id.navigation_drawer_developer_image);
-        getPRO = view.findViewById(R.id.get_pro_version);
         filter = view.findViewById(R.id.fragment_main_filter);
         capture = view.findViewById(R.id.fragment_main_capture);
         changeCamera = view.findViewById(R.id.fragment_main_camera_change);
@@ -401,27 +394,19 @@ public class MainPageFragment extends Fragment implements
             drawerLayout.closeDrawer(GravityCompat.END);
         switch (v.getId()) {
             case R.id.fragment_main_toolbar_expand_iv:
-                Helper.recordEventClick("MainpageFragment", "ExpandToolbar");
                 expandHandle();
                 break;
             case R.id.navigation_drawer_developer_image:
                 Helper.simpleAddFragment(getFragmentManager(), new ProfileFragment());
                 break;
             case R.id.fragment_main_filter:
-                Helper.recordEventClick("MainpageFragment", "Filter");
                 filterHandle();
                 break;
             case R.id.fragment_main_camera_change:
-                Helper.recordEventClick("MainpageFragment", "Change Camera");
                 cameraChangeHandle();
                 break;
 
-            case R.id.get_pro_version:
-                Helper.recordEventClick("MainpageFragment", "Get PRO Version");
-                Helper.getProVersion();
-                break;
             case R.id.fragment_main_capture:
-                Helper.recordEventClick("MainpageFragment", "Capture");
                 if (currentFilter == null)
                     return;
                 capture.startAnimation(Constants.FAST_SCALE_ANIMATION);
@@ -440,29 +425,31 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void cameraChangeHandle() {
-        toggleCameraType();
-        FlipAnimation flipAnimation = new FlipAnimation(changeCamera, changeCamera);
-        flipAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+        if (currentFilter != null) {
+            toggleCameraType();
+            FlipAnimation flipAnimation = new FlipAnimation(changeCamera, changeCamera);
+            flipAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
 
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    setFragment();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+            if (changeCamera.getVisibility() == View.GONE) {
+                flipAnimation.reverse();
+                changeCamera.startAnimation(flipAnimation);
+            } else {
+                changeCamera.startAnimation(flipAnimation);
             }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                setFragment();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        if (changeCamera.getVisibility() == View.GONE) {
-            flipAnimation.reverse();
-            changeCamera.startAnimation(flipAnimation);
-        } else {
-            changeCamera.startAnimation(flipAnimation);
         }
     }
 
@@ -471,28 +458,45 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void filterHandle() {
-        showDialog();
-
-        ServiceGenerator.getInstance().createService(ClientApi.class).getCurrentItems().enqueue(new Callback<List<BubbleItem>>() {
+        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
             @Override
-            public void onResponse(Call<List<BubbleItem>> call, Response<List<BubbleItem>> response) {
-                if (response.body() != null) {
-                    bubbleItems.clear();
-                    bubbleItems.addAll(BubbleItem.getLocallyExistBubbleItems(response.body()));
-                    displayAvailablesEmpty(bubbleItems.isEmpty());
-                    if (bubbleItems.isEmpty()) {
-                        permitToDetect = false;
-                    } else {
-                        dialog_adapter.notifyDataSetChanged();
-                    }
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if (report.areAllPermissionsGranted()) {
+                    showDialog();
+
+                    ServiceGenerator.getInstance().createService(ClientApi.class).getCurrentItems().enqueue(new Callback<List<BubbleItem>>() {
+                        @Override
+                        public void onResponse(Call<List<BubbleItem>> call, Response<List<BubbleItem>> response) {
+                            if (response.body() != null) {
+                                bubbleItems.clear();
+                                bubbleItems.addAll(BubbleItem.getLocallyExistBubbleItems(response.body()));
+                                displayAvailablesEmpty(bubbleItems.isEmpty());
+                                if (bubbleItems.isEmpty()) {
+                                    permitToDetect = false;
+                                } else {
+                                    dialog_adapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<BubbleItem>> call, Throwable t) {
+                            Log.d(Constants.TAG, t.getMessage());
+                        }
+                    });
+                } else {
+                    Helper.showToast(getActivity(), "خطا در دریافت تمام مجوز های مربوطه");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<BubbleItem>> call, Throwable t) {
-                Log.d(Constants.TAG, t.getMessage());
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                token.continuePermissionRequest();
             }
-        });
+        }).withErrorListener(error -> {
+            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+            Log.d(Constants.TAG, error.toString());
+        }).check();
     }
 
     private void showDialog() {

@@ -23,7 +23,6 @@ import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.ContextHelper;
-import dev.aban.visible.utils.Helper;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,7 +53,6 @@ public class MoreFragment extends Fragment {
     }
 
     private void initialize() {
-        Helper.recordEventView("Fragment_More");
         progressBar.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
         layoutManager = new LinearLayoutManager(ContextHelper.retrieveContext(), LinearLayoutManager.VERTICAL, false);

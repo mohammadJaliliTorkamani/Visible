@@ -1,6 +1,7 @@
 package dev.aban.visible.view.fragment;
 
-import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,17 +17,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.nguyenhoanglam.imagepicker.model.Config;
 import com.nguyenhoanglam.imagepicker.model.Image;
 import com.nguyenhoanglam.imagepicker.ui.imagepicker.ImagePicker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import dev.aban.visible.R;
@@ -35,6 +30,7 @@ import dev.aban.visible.model.SMSResult;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
 import dev.aban.visible.utils.Constants;
+import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.EditTextPlus;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
@@ -166,72 +162,90 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
                 Helper.isCorrectInput(Constants.InputType.PHONE, phone) &&
                 selectedImageFilePath != null) {
 
-            boolean _isMale = isMale;
 
-            String _fullname = fullName.getText().toString();
-            String _username = username.getText().toString();
-            String _password = password.getText().toString();
-            String _phone = phone.getText().toString();
-            String _day = day.getText().toString();
-            String _month = month.getText().toString();
-            String _year = year.getText().toString();
-            String _selectedImageFilePath = selectedImageFilePath;
+            showTermsOfUseAldPolicyDialog(() -> {
+                boolean _isMale = isMale;
 
-            makeConfirmVisible(false);
+                String _fullname = fullName.getText().toString();
+                String _username = username.getText().toString();
+                String _password = password.getText().toString();
+                String _phone = phone.getText().toString();
+                String _day = day.getText().toString();
+                String _month = month.getText().toString();
+                String _year = year.getText().toString();
+                String _selectedImageFilePath = selectedImageFilePath;
 
-            ServiceGenerator.getInstance().createService(ClientApi.class).isUserExists(_phone, _username).enqueue(new Callback<RegisterResponse>() {
-                @Override
-                public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                    if (response.body() != null) {
-                        if (!response.body().isRegistered()) {
-                            ServiceGenerator.getInstance().createService(ClientApi.class).sendSMSCode(_phone).enqueue(new Callback<SMSResult>() {
-                                @Override
-                                public void onResponse(Call<SMSResult> call, Response<SMSResult> response) {
-                                    if (response.body() != null) {
-                                        if (response.body().getCode() == 101) {
-                                            Bundle bundle = new Bundle();
-                                            bundle.putString("full_name", _fullname);
-                                            bundle.putString("username", _username);
-                                            bundle.putString("password", _password);
-                                            bundle.putString("phone", _phone);
-                                            bundle.putString("day", _day);
-                                            bundle.putString("month", _month);
-                                            bundle.putString("year", _year);
-                                            bundle.putString("image", _selectedImageFilePath);
-                                            bundle.putBoolean("is_male", _isMale);
-                                            Fragment fragment = new OtpCodeVerificationFragment();
-                                            fragment.setArguments(bundle);
-                                            Helper.simpleAddFragment(getFragmentManager(), fragment);
+                makeConfirmVisible(false);
+
+                ServiceGenerator.getInstance().createService(ClientApi.class).isUserExists(_phone, _username).enqueue(new Callback<RegisterResponse>() {
+                    @Override
+                    public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
+                        if (response.body() != null) {
+                            if (!response.body().isRegistered()) {
+                                ServiceGenerator.getInstance().createService(ClientApi.class).sendSMSCode(_phone).enqueue(new Callback<SMSResult>() {
+                                    @Override
+                                    public void onResponse(Call<SMSResult> call, Response<SMSResult> response) {
+                                        if (response.body() != null) {
+                                            if (response.body().getCode() == 101) {
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("full_name", _fullname);
+                                                bundle.putString("username", _username);
+                                                bundle.putString("password", _password);
+                                                bundle.putString("phone", _phone);
+                                                bundle.putString("day", _day);
+                                                bundle.putString("month", _month);
+                                                bundle.putString("year", _year);
+                                                bundle.putString("image", _selectedImageFilePath);
+                                                bundle.putBoolean("is_male", _isMale);
+                                                Fragment fragment = new OtpCodeVerificationFragment();
+                                                fragment.setArguments(bundle);
+                                                makeConfirmVisible(true);
+                                                Helper.simpleAddFragment(getFragmentManager(), fragment);
+                                            }
                                         }
                                     }
-                                }
 
-                                @Override
-                                public void onFailure(Call<SMSResult> call, Throwable t) {
-                                    makeConfirmVisible(true);
-                                    Log.d(Constants.TAG, "Error while sending sms");
-                                }
-                            });
+                                    @Override
+                                    public void onFailure(Call<SMSResult> call, Throwable t) {
+                                        makeConfirmVisible(true);
+                                        Log.d(Constants.TAG, "Error while sending sms");
+                                    }
+                                });
+                            } else {
+                                Helper.showToast(getActivity(), "user exists !");
+                                makeConfirmVisible(true);
+                            }
                         } else {
-                            Helper.showToast(getActivity(), "user exists !");
+                            Log.d(Constants.TAG, "error while check user phone existence");
                             makeConfirmVisible(true);
                         }
-                    } else {
-                        Log.d(Constants.TAG, "error while check user phone existence");
+                    }
+
+                    @Override
+                    public void onFailure(Call<RegisterResponse> call, Throwable t) {
+                        Log.d(Constants.TAG, "error while check user phon existence, " + t.getMessage());
                         makeConfirmVisible(true);
                     }
-                }
-
-                @Override
-                public void onFailure(Call<RegisterResponse> call, Throwable t) {
-                    Log.d(Constants.TAG, "error while check user phon existence, " + t.getMessage());
-                    makeConfirmVisible(true);
-                }
+                });
             });
         } else {
             makeConfirmVisible(true);
             Helper.showToast(getActivity(), R.string.control_input_fields);
         }
+    }
+
+    private void showTermsOfUseAldPolicyDialog(Runnable onAccepted) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View view = LayoutInflater.from(ContextHelper.retrieveContext()).inflate(R.layout.dialog_policy, null, false);
+        builder.setView(view);
+        Dialog dialog = builder.create();
+        TextViewPlus acceptAndContinue = view.findViewById(R.id.dialog_policy_accept);
+        acceptAndContinue.setOnClickListener(v -> {
+            dialog.dismiss();
+            onAccepted.run();
+        });
+
+        dialog.show();
     }
 
     @Override
@@ -262,34 +276,20 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
 
     private void makeConfirmVisible(boolean visible) {
         signupText.setVisibility(visible ? View.VISIBLE : View.GONE);
+        signup.setClickable(visible);
         signupPB.setVisibility(!visible ? View.VISIBLE : View.GONE);
     }
 
     private void imageChooseHandler() {
-        Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.CAMERA).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                if (report.areAllPermissionsGranted()) {
-                    ImagePicker.with(RegisterFragment.this)                         //  Initialize ImagePicker with activity or fragment context
-                            .setMultipleMode(false)              //  Select multiple images or single image
-                            .setShowCamera(true)                //  Show camera button
-                            .setCameraOnly(false)               //  Camera mode
-                            .setAlwaysShowDoneButton(true)      //  Set always show done button in multiple mode
-                            .setRequestCode(100)                //  Set request code, default Config.RC_PICK_IMAGES
-                            .setMaxSize(128)
-                            .setKeepScreenOn(true)              //  Keep screen on when selecting images
-                            .start();
-                } else {
-                    Log.d(Constants.TAG, "permission denied");
-                }
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-                token.continuePermissionRequest();
-            }
-        }).withErrorListener(error -> Log.d(Constants.TAG, error.toString())).check();
+        ImagePicker.with(RegisterFragment.this)                         //  Initialize ImagePicker with activity or fragment context
+                .setMultipleMode(false)              //  Select multiple images or single image
+                .setShowCamera(true)                //  Show camera button
+                .setCameraOnly(false)               //  Camera mode
+                .setAlwaysShowDoneButton(true)      //  Set always show done button in multiple mode
+                .setRequestCode(100)                //  Set request code, default Config.RC_PICK_IMAGES
+                .setMaxSize(128)
+                .setKeepScreenOn(true)              //  Keep screen on when selecting images
+                .start();
     }
 
     private void loginHandler() {

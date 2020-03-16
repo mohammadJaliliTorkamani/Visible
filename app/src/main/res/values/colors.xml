@@ -2,15 +2,15 @@
 <resources>
     <color name="colorPrimary">#EBEBEB</color>
     <color name="colorPrimaryDark">@android:color/black</color>
-    <color name="colorAccent">#4291C5</color>
+    <color name="colorAccent">#1786E6</color>
     <color name="picture_chooser_border">#e9e9e9</color>
     <color name="complete_profile_hint_color">#c0c0c0</color>
-    <color name="light_gray">#F1F1F1</color>
+    <color name="light_gray">#F7F7F7</color>
     <color name="medium_gray">#B8B8B8</color>
     <color name="toolbar_color">@color/colorAccent</color>
     <color name="toolbar_content_color">@android:color/white</color>
     <color name="capture_icon">@color/colorAccent</color>
-    <color name="borders_color">#123BB1</color>
+    <color name="borders_color">@color/colorAccent</color>
     <color name="share_bullet_1">#FFC107</color>
     <color name="share_bullet_2">#4CAF50</color>
     <color name="share_bullet_3">#F44336</color>

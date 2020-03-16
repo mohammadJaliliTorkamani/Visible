@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import dev.aban.visible.model.BubbleItem;
-import dev.aban.visible.model.DonateItem;
 import dev.aban.visible.model.LoginResponse;
 import dev.aban.visible.model.MoreApp;
 import dev.aban.visible.model.NagScreen;
+import dev.aban.visible.model.PasswordRecoverResponse;
 import dev.aban.visible.model.RegisterResponse;
 import dev.aban.visible.model.SMSResult;
 import dev.aban.visible.model.User;
@@ -37,9 +37,6 @@ public interface ClientApi {
     @GET("drawer.php")
     Call<User> getProfilePictures();
 
-    @GET("donate_items.php")
-    Call<List<DonateItem>> getDonateList();
-
     @GET("market_sell_items.php")
     Call<List<BubbleItem>> getMarketItems();
 
@@ -67,17 +64,17 @@ public interface ClientApi {
     @GET("bubble.php")
     Call<BubbleItem> getBubbleInfo(@Query("bubble_id") int bubbleID);
 
-    @GET("nag_screen_fa.php")
+    @GET("nag_screen.php")
     Call<NagScreen> getNagScreen();
 
-    @GET("more_apps_fa.php")
+    @GET("more_apps.php")
     Call<List<MoreApp>> getMoreAppList();
 
     @GET("is_user_exists.php")
     Call<RegisterResponse> isUserExists(@Query("phone") String phone, @Query("username") String username);
 
     @GET("bubble_sku.php")
-    Call<ResponseBody> getBubbleSKU(@Query("bubble_id") int bubbleID);
+    Call<BubbleItem> getBubbleSKU(@Query("bubble_id") int bubbleID);
 
     @POST("save_purchase_info.php")
     @FormUrlEncoded
@@ -87,4 +84,7 @@ public interface ClientApi {
                                               @Field("signature") String signature,
                                               @Field("original_json") String originalJson,
                                               @Field("order_id") String orderId);
+
+    @GET("recover_password.php")
+    Call<PasswordRecoverResponse> recoverPassword(@Query("phone") String phone);
 }

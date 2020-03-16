@@ -50,7 +50,6 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initialize() {
-        Helper.recordEventView("SettingFragment");
         bubbleSoundSwitch.setClickable(false);
         bubbleSoundSwitch.setChecked(Helper.loadSetting(Constants._TABLE_USER, Constants._KEY_BUBBLE_SOUND, "true").equals("true"));
         initLicenses();
@@ -92,11 +91,9 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.setting_legal_open_source_licenses:
-                Helper.recordEventClick("SettingFragment", "OpenSourceLibraries");
                 shoeLicenseDialog();
                 break;
             case R.id.setting_authority_log_out:
-                Helper.recordEventClick("SettingFragment", "LogOut");
                 displayLogOut();
                 break;
             case R.id.setting_authority_contact_us:

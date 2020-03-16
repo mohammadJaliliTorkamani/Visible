@@ -15,7 +15,6 @@ import dev.aban.visible.R;
 import dev.aban.visible.model.LoginResponse;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
-import dev.aban.visible.utils.BazaarPurchase;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.EditTextPlus;
@@ -34,6 +33,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private ProgressBar loginPB;
     private TextViewPlus loginText;
     private TextViewPlus register;
+    private TextViewPlus recoverpassword;
     private TextViewPlus registerQuestion;
 
 
@@ -53,6 +53,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         icon.startAnimation(Constants.NORMAL_SCALE_ANIMATION);
         icon.startAnimation(Constants.NORMAL_SCALE_ANIMATION);
         username.startAnimation(Constants.LTR_ANIMATION);
+        recoverpassword.startAnimation(Constants.LTR_ANIMATION);
         password.startAnimation(Constants.RTL_ANIMATION);
         registerQuestion.startAnimation(Constants.SLIDE_UP_ANIMATION);
         register.startAnimation(Constants.SLIDE_UP_ANIMATION);
@@ -66,6 +67,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         loginPB = view.findViewById(R.id.fragment_login_login_pb);
         loginText = view.findViewById(R.id.fragment_login_btn_text);
         register = view.findViewById(R.id.fragment_login_create_account);
+        recoverpassword = view.findViewById(R.id.fragment_login_recover_password);
         registerQuestion = view.findViewById(R.id.fragment_login_create_account_question);
     }
 
@@ -76,6 +78,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private void manageListeners() {
         login.setOnClickListener(this);
         register.setOnClickListener(this);
+        recoverpassword.setOnClickListener(this);
     }
 
 
@@ -88,8 +91,15 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             case R.id.fragment_login_create_account:
                 createAccountHandler();
                 break;
+            case R.id.fragment_login_recover_password:
+                recoverPasswordHandler();
+                break;
 
         }
+    }
+
+    private void recoverPasswordHandler() {
+        Helper.simpleAddFragment(getFragmentManager(), new RecoverPasswordFragment());
     }
 
     private void createAccountHandler() {
@@ -109,27 +119,18 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
                         if (response.body().isSuccessful()) {
                             Helper.saveSetting(Constants._TABLE_USER, Constants._KEY_LOGIN_STATE, "true");
                             Helper.saveSetting(Constants._TABLE_PROFILE, Constants._KEY_TOKEN, response.body().getToken());
-                            try {
-                                BazaarPurchase.getInstance().getHelper().startSetup(result -> {
-                                    Log.d(Constants.TAG, "Setup finished.");
-                                    if (result.isSuccess()) {
-                                        getFragmentManager()
-                                                .beginTransaction()
-                                                .replace(R.id.activity_main_container, new MainPageFragment())
-                                                .commitAllowingStateLoss();
-                                    } else {
-                                        Log.d(Constants.TAG, "Problem setting up In-app Billing: " + result);
-                                        Helper.showToast(getActivity(), R.string.purchase_not_supported);
-                                    }
-
-                                });
-                            } catch (Exception e) {
-                                Log.d(Constants.TAG, e.getMessage());
-                            }
+                            visibleLoginText(true);
+                            getFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.activity_main_container, new MainPageFragment())
+                                    .commit();
                         } else {
                             visibleLoginText(true);
                             Helper.showToast(getActivity(), R.string.wrong_information);
                         }
+                    } else {
+                        visibleLoginText(true);
+                        Log.d("AAAAAAAAAAAAAAAAAAAAA", "ASD");
                     }
                 }
 
@@ -144,6 +145,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     }
 
     private void visibleLoginText(boolean visible) {
+        login.setClickable(visible);
         loginText.setVisibility(visible ? View.VISIBLE : View.GONE);
         loginPB.setVisibility(!visible ? View.VISIBLE : View.GONE);
     }

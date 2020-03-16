@@ -18,7 +18,7 @@
     <string name="already_have_an_account">هم اکنون حساب دارید؟</string>
     <string name="login_into_account">ورود به حساب</string>
     <string name="about_us">درباره ما</string>
-    <string name="version_code">ورژن 1.2</string>
+    <string name="version_code">ورژن 1.5</string>
     <string name="developer">توسعه دهنده : محمد جلیلی ترکمانی</string>
     <string name="about_us_content">یک برنامه هوش مصنوعی که به شما در پیدا کردن اجسام دلخواه کمک میکند !</string>
     <string name="gmail_value">mohammad.jalili.torkamani@gmail.com</string>
@@ -48,12 +48,15 @@
     <string name="share_app_prefix">سلام ! من اینجا ام که یک برنامه بی نظیر رو بهت معرفی کنم ! کافیه به این لینک سر بزنی :‌ </string>
     <string name="are_you_sure_to_loog_out">برای خروج از حساب کاربری اطمینان دارید؟</string>
     <string name="play_detect_sound">افکت صوتی</string>
-    <string name="get_pro_version">دریافت نسخه پرو!</string>
     <string name="sign_in">ورود</string>
     <string name="more_apps">برنامه های بیشتر</string>
     <string name="select_bubble">انتخاب حباب</string>
     <string name="download">دانلود</string>
     <string name="password_min_8_digit">گذرواژه حداقل هشت رقمی</string>
-    <string name="donate_text">ما را حمایت کنیییید</string>
+    <string name="donate_text">شما میتوانید برای اطلاع از نحوه حمایت از تیم توسعه دهنگی ویزیبل ، با راه های ارتباطی ذکر شده در قسمت درباره ما ، و یا کافه بازار ، با ما مکاتبه داشته باشید .</string>
     <string name="purchase_not_supported">عملیات پرداخت پشتیبانی نمیشود</string>
+    <string name="recover_password">بازیابی رمز عبور</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="recover">بازیابی</string>
 </resources>

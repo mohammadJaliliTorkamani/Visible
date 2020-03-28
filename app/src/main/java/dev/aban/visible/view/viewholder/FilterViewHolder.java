@@ -11,6 +11,7 @@ import com.squareup.picasso.Picasso;
 import dev.aban.visible.R;
 import dev.aban.visible.listener.BubbleClickListener;
 import dev.aban.visible.model.BubbleItem;
+import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
 
 public class FilterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -32,6 +33,8 @@ public class FilterViewHolder extends RecyclerView.ViewHolder implements View.On
         this.item = item;
         Picasso.get().load(item.getImageURL()).into(image);
         textViewPlus.setText(item.getTitle());
+        textViewPlus.setTextColor(ContextHelper.retrieveContext().getResources().getColor(item.isSelected() ? android.R.color.white : R.color.borders_color));
+        textViewPlus.setBackgroundColor(ContextHelper.retrieveContext().getResources().getColor(item.isSelected() ? R.color.borders_color : android.R.color.white));
 
     }
 

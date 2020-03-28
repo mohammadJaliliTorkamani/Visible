@@ -47,6 +47,7 @@ import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
 import info.abdolahi.CircularMusicProgressBar;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -100,7 +101,7 @@ public class MarketFragment extends Fragment {
                                 if (report.areAllPermissionsGranted()) {
                                     showItemInfoDialog(item, false);
                                 } else {
-                                    Helper.showToast(getActivity(), "خطا در دریافت مجوز های مربوطه");
+                                    Helper.showToast(getActivity(), "Error in permission");
                                 }
                             }
 
@@ -111,7 +112,7 @@ public class MarketFragment extends Fragment {
                         })
                         .withErrorListener(error -> {
                             Log.d(Constants.TAG, error.toString());
-                            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+                            Helper.showToast(getActivity(), "Error in permission");
                         }).check());
         sellBubbles_adapter = new StoreSellBubbleAdapter(toSellBubbles,
                 item -> Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -121,7 +122,7 @@ public class MarketFragment extends Fragment {
                                 if (report.areAllPermissionsGranted()) {
                                     showItemInfoDialog(item, true);
                                 } else {
-                                    Helper.showToast(getActivity(), "خطا در دریافت مجوز های مربوطه");
+                                    Helper.showToast(getActivity(), "Error in permission");
                                 }
                             }
 
@@ -132,7 +133,7 @@ public class MarketFragment extends Fragment {
                         })
                         .withErrorListener(error -> {
                             Log.d(Constants.TAG, error.toString());
-                            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+                            Helper.showToast(getActivity(), "Error in permission");
                         }).check());
         currentBubbles_rv.setAdapter(currentBubbles_adapter);
         sellBubbles_rv.setAdapter(sellBubbles_adapter);
@@ -239,6 +240,7 @@ public class MarketFragment extends Fragment {
                             } else {
                                 buy.setVisibility(View.VISIBLE);
                                 buy.setOnClickListener(v -> {
+                                    buy.setClickable(false);
                                     downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
                                 });
                             }
@@ -246,18 +248,21 @@ public class MarketFragment extends Fragment {
                             if (mustPurchaseFirst) {
                                 Helper.deleteIllegalBubbleFile(bubbleItem);
                                 buy.setVisibility(View.VISIBLE);
-                                Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
-                                    @Override
-                                    public void onSuccessPayment(String ITN) {
-                                        Log.d(Constants.TAG, ITN);
-                                        downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
-                                    }
+                                buy.setOnClickListener(v -> {
+                                    buy.setClickable(false);
+                                    Helper.bubblePurchase(getActivity(), item.getId(), new OnExecuteSavedPayment() {
+                                        @Override
+                                        public void onSuccessPayment(String ITN) {
+                                            Log.d(Constants.TAG, ITN);
+                                            downloadItem(bubbleItem, logo, buy, DownloadMode.BOTH_FILES);
+                                        }
 
-                                    @Override
-                                    public void onFailedPayment(String error) {
-                                        Log.d(Constants.TAG, error);
-                                        buy.setClickable(true);
-                                    }
+                                        @Override
+                                        public void onFailedPayment(String error) {
+                                            Log.d(Constants.TAG, error);
+                                            buy.setClickable(true);
+                                        }
+                                    });
                                 });
                             } else {
                                 buy.setVisibility(View.VISIBLE);
@@ -362,28 +367,39 @@ public class MarketFragment extends Fragment {
     }
 
     private void downloadItem(BubbleItem item, CircularMusicProgressBar logo, TextViewPlus buy, DownloadMode downloadMode) {
-        Helper.showToast(getActivity(), "دانلود شروع شد");
+        Helper.showToast(getActivity(), "Download started");
         Helper.downloadItem(item, downloadMode, (progressPercentage) -> {
             Log.d(Constants.TAG, "" + progressPercentage);
             logo.setValue(progressPercentage * 100);
-        }, () -> {
-            buy.setClickable(false);
-            buy.setVisibility(View.GONE);
-            logo.setValue(0);
-            Helper.showToast(getActivity(), "حباب '" + item.getTitle() + "' دانلود شد !");
-            item.setPermittedToUse(true);
-            if (!currentBubbles.contains(item)) {
-                currentBubbles.add(item);
-                currentBubbles_adapter.notifyDataSetChanged();
-                displayEmptyCurrentContent(currentBubbles.isEmpty());
+        }, () -> ServiceGenerator.getInstance().createService(ClientApi.class).saveBubbleOwnInfo(item.getId()).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.body() != null) {
+                    buy.setClickable(false);
+                    buy.setVisibility(View.GONE);
+                    logo.setValue(0);
+                    Helper.showToast(getActivity(), "Bubble '" + item.getTitle() + "' Downloaded!");
+                    item.setPermittedToUse(true);
+                    if (!currentBubbles.contains(item)) {
+                        currentBubbles.add(item);
+                        currentBubbles_adapter.notifyDataSetChanged();
+                        displayEmptyCurrentContent(currentBubbles.isEmpty());
+                    }
+
+                    if (toSellBubbles.contains(item)) {
+                        toSellBubbles.remove(item);
+                        sellBubbles_adapter.notifyDataSetChanged();
+                        displayEmptySellContent(toSellBubbles.isEmpty());
+                    }
+                } else
+                    Log.d(Constants.TAG, "error while save own info");
             }
 
-            if (toSellBubbles.contains(item)) {
-                toSellBubbles.remove(item);
-                sellBubbles_adapter.notifyDataSetChanged();
-                displayEmptySellContent(toSellBubbles.isEmpty());
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d(Constants.TAG, "error while save own info, " + t.getMessage());
             }
-        });
+        }));
     }
 
     private void findViews() {

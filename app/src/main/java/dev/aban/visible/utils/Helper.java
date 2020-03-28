@@ -20,6 +20,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.google.gson.Gson;
 import com.ixuea.android.downloader.DownloadService;
 import com.ixuea.android.downloader.callback.DownloadListener;
 import com.ixuea.android.downloader.callback.DownloadManager;
@@ -30,11 +31,15 @@ import com.microsoft.appcenter.analytics.Analytics;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
@@ -49,6 +54,7 @@ import dev.aban.visible.model.DrawerItem;
 import dev.aban.visible.model.WeightInfo;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -108,16 +114,6 @@ public class Helper {
 
     public static String getLocalPriceUnit() {
         return Constants.PRICE_UNIT;
-    }
-
-    /**
-     * includes purchase + save into server
-     *
-     * @param bubbleID
-     * @param afterPurchase
-     */
-    public static void bubblePurchase(Activity activity, int bubbleID, OnExecuteSavedPayment afterPurchase) {
-        BazaarPurchase.getInstance().purchaseBubbleItem(activity, bubbleID, afterPurchase);
     }
 
     public static void logout() {
@@ -380,9 +376,9 @@ public class Helper {
         try {
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "اشتراک گذاری برنامه");
+            sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Share app");
             sendIntent.putExtra(Intent.EXTRA_TEXT, ContextHelper.retrieveContext().getString(R.string.share_app_prefix) +
-                    "\n http://cafebazaar.ir/app/?id=" + ContextHelper.retrieveContext().getPackageName());
+                    "\n https://play.google.com/store/apps/details?id=" + ContextHelper.retrieveContext().getPackageName());
             sendIntent.setType("text/plain");
             ContextHelper.retrieveContext().startActivity(sendIntent);
         } catch (Exception e) {
@@ -412,7 +408,7 @@ public class Helper {
         i.putExtra(Intent.EXTRA_SUBJECT, ContextHelper.retrieveContext().getString(R.string.contact_lexin));
         i.putExtra(Intent.EXTRA_TEXT, "");
         try {
-            ContextHelper.retrieveContext().startActivity(Intent.createChooser(i, ContextHelper.retrieveContext().getString(R.string.send_via)));
+            activity.startActivity(Intent.createChooser(i, ContextHelper.retrieveContext().getString(R.string.send_via)));
         } catch (android.content.ActivityNotFoundException ex) {
             showToast(activity, R.string.install_email_client);
         }
@@ -428,9 +424,9 @@ public class Helper {
             case PASSWORD:
                 return value.length() > 7;
             case PHONE:
-                return value.length() == Constants.PHONE_NMBER_LENGTH && value.startsWith(Constants.PHONE_NMBER_PREFIX);
+                return true;
             case YEAR:
-                return Integer.parseInt(value) > 0 && Integer.parseInt(value) >= 1330;
+                return Integer.parseInt(value) > 0 && Integer.parseInt(value) >= 1930;
 
             case MONTH:
                 return Integer.parseInt(value) > 0 && Integer.parseInt(value) <= 12;
@@ -465,5 +461,87 @@ public class Helper {
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(ContextHelper.retrieveContext().getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
+    }
+
+    public static void bubblePurchase(Activity activity, int bubbleID, OnExecuteSavedPayment onExecuteSavedPayment) {
+        ServiceGenerator.getInstance().createService(ClientApi.class)
+                .saveBubblePurchaseInfo(bubbleID, -1, "null", "null", "{}", "null").enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.body() != null) {
+                    onExecuteSavedPayment.onSuccessPayment("null");
+                } else {
+                    onExecuteSavedPayment.onFailedPayment("error in saving purchase item : null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                onExecuteSavedPayment.onFailedPayment("error in saving bubble purchase item saving : null" + " , " + t.getMessage());
+            }
+        });
+    }
+
+    public static float getMinimumConfidenceFactor() {
+        return Float.valueOf(loadSetting(Constants._TABLE_USER, Constants._KEY_CONFIDENCE_FACTOR, String.valueOf(Constants.DEFAULT_MINIMUM_CONFIDENCE_TF_OD_API)));
+    }
+
+    public static String[] getConfidenceFactors() {
+        return new String[]{"0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9"};
+    }
+
+    public static boolean createDirIfNotExists(String name) {
+        boolean ret = true;
+
+        File file = new File(Environment.getExternalStorageDirectory() + "/" + "visible", name);
+        if (!file.exists()) {
+            if (!file.mkdirs()) {
+                ret = false;
+            }
+        }
+        return ret;
+    }
+
+    public static void saveImageIntoGallery(Bitmap image) {
+        File pictureFile = getOutputMediaFile();
+        if (pictureFile == null) {
+            Log.d(Constants.TAG, "Error creating media file, permissions are not qualified");
+            return;
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(Constants.TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(Constants.TAG, "Error accessing file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Create a File for saving an image or video
+     */
+    private static File getOutputMediaFile() {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/visible/images");
+
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("dd_MM_yyyy_HH_mm").format(new Date());
+        File mediaFile;
+        String mImageName = "visible_" + timeStamp + ".jpg";
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + mImageName);
+        Log.d(Constants.TAG, "" + new Gson().toJson(mediaFile));
+        return mediaFile;
     }
 }

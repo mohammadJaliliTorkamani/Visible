@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,12 +21,10 @@ import dev.aban.visible.R;
 import dev.aban.visible.model.NagScreen;
 import dev.aban.visible.repository.network.ClientApi;
 import dev.aban.visible.repository.network.ServiceGenerator;
-import dev.aban.visible.utils.BazaarPurchase;
 import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
-import dev.aban.visible.view.fragment.LoginFragment;
-import dev.aban.visible.view.fragment.MainPageFragment;
+import dev.aban.visible.view.fragment.SplashFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,23 +36,9 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         handleNagScreen();
-
-        BazaarPurchase.getInstance().getHelper().startSetup(result -> {
-            Log.d(Constants.TAG, "Setup finished.");
-            if (!result.isSuccess()) {
-                Log.d(Constants.TAG, "Problem setting up In-app Billing: " + result);
-                Helper.showToast(this, R.string.purchase_not_supported);
-            }
-        });
-        if (null == savedInstanceState) {
-            openFragment(!Helper.isLogin() ? new LoginFragment() : new MainPageFragment());
-        }
-    }
-
-    private void openFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.activity_main_container, fragment)
+                .replace(R.id.activity_main_container, new SplashFragment())
                 .commit();
     }
 
@@ -112,22 +95,5 @@ public class MainActivity extends AppCompatActivity {
         });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
-    }
-
-    @Override
-    protected void onDestroy() {
-        BazaarPurchase.getInstance().disposePurchase();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(Constants.TAG, "onActivityResult(" + requestCode + "," + resultCode + "," + data + ")");
-        // Pass on the activity result to the helper for handling
-        if (!BazaarPurchase.getInstance().getHelper().handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        } else {
-            Log.d(Constants.TAG, "onActivityResult handled by IABUtil.");
-        }
     }
 }

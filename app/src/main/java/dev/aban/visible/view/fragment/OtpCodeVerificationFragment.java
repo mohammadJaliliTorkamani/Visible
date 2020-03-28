@@ -114,7 +114,7 @@ public class OtpCodeVerificationFragment extends Fragment implements View.OnClic
                         });
             }
         } else
-            Helper.showToast(getActivity(), "ک به درستی وارد نشده است");
+            Helper.showToast(getActivity(), "Code is not correct");
     }
 
     @Override

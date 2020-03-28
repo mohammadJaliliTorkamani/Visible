@@ -73,8 +73,8 @@ public interface ClientApi {
     @GET("is_user_exists.php")
     Call<RegisterResponse> isUserExists(@Query("phone") String phone, @Query("username") String username);
 
-    @GET("bubble_sku.php")
-    Call<BubbleItem> getBubbleSKU(@Query("bubble_id") int bubbleID);
+    @GET("recover_password.php")
+    Call<PasswordRecoverResponse> recoverPassword(@Query("phone") String phone);
 
     @POST("save_purchase_info.php")
     @FormUrlEncoded
@@ -85,6 +85,6 @@ public interface ClientApi {
                                               @Field("original_json") String originalJson,
                                               @Field("order_id") String orderId);
 
-    @GET("recover_password.php")
-    Call<PasswordRecoverResponse> recoverPassword(@Query("phone") String phone);
+    @GET("save_own_info.php")
+    Call<ResponseBody> saveBubbleOwnInfo(@Query("bubble_id") int bubbleID);
 }

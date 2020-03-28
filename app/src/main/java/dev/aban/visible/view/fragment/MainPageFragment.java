@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -145,6 +144,7 @@ public class MainPageFragment extends Fragment implements
 
 
     private int cameraType = CameraCharacteristics.LENS_FACING_BACK;
+    private Bitmap bitmap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -261,7 +261,6 @@ public class MainPageFragment extends Fragment implements
     private void onPreviewSizeChosen(final Size size, final int rotation) {
         final float textSizePx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constants.TEXT_SIZE_DIP, getResources().getDisplayMetrics());
         borderedText = new BorderedText(textSizePx);
-        borderedText.setTypeface(Typeface.MONOSPACE);
         tracker = new MultiBoxTracker(getActivity());
         int cropSize = Constants.TF_OD_API_INPUT_SIZE;
 
@@ -285,7 +284,9 @@ public class MainPageFragment extends Fragment implements
         cropToFrameTransform = new Matrix();
         frameToCropTransform.invert(cropToFrameTransform);
         trackingOverlay = view.findViewById(R.id.tracking_overlay);
-        trackingOverlay.addCallback(canvas -> tracker.draw(canvas));
+        trackingOverlay.addCallback(canvas -> {
+            tracker.draw(canvas);
+        });
     }
 
     private String chooseCamera(int cameraType) {
@@ -325,7 +326,7 @@ public class MainPageFragment extends Fragment implements
             getFragmentManager()
                     .beginTransaction()
                     .replace(R.id.camera_view, camera2Fragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 
@@ -338,8 +339,8 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void handleDrawerItems(int position) {
-        if (drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.closeDrawer(GravityCompat.END);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
 
         switch (position) {
             case 0:
@@ -390,8 +391,8 @@ public class MainPageFragment extends Fragment implements
 
     @Override
     public void onClick(View v) {
-        if (drawerLayout.isDrawerOpen(GravityCompat.END))
-            drawerLayout.closeDrawer(GravityCompat.END);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawer(GravityCompat.START);
         switch (v.getId()) {
             case R.id.fragment_main_toolbar_expand_iv:
                 expandHandle();
@@ -411,7 +412,30 @@ public class MainPageFragment extends Fragment implements
                     return;
                 capture.startAnimation(Constants.FAST_SCALE_ANIMATION);
                 new AudioPlayer().play(R.raw.capture_sound);
-                Helper.showToast(getActivity(), "به زودی");
+                if (bitmap != null) {
+                    Bitmap independentBitmap = bitmap.copy(bitmap.getConfig(), true);
+
+                    Dexter.withActivity(getActivity())
+                            .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .withListener(new MultiplePermissionsListener() {
+                                @Override
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                    if (report.areAllPermissionsGranted()) {
+                                        Helper.showToast(getActivity(), "image saved into your successfully");
+                                        Helper.saveImageIntoGallery(independentBitmap);
+                                    } else {
+                                        Helper.showToast(getActivity(), "No permission granted to save, failed.");
+                                    }
+                                }
+
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                    token.continuePermissionRequest();
+                                }
+                            })
+                            .withErrorListener(error -> Log.d(Constants.TAG, error.toString()))
+                            .check();
+                }
 
                 break;
             case R.id.fragment_main_no_filter:
@@ -458,6 +482,8 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void filterHandle() {
+        bubbleItems.clear();
+        dialog_adapter.notifyDataSetChanged();
         Dexter.withActivity(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new MultiplePermissionsListener() {
             @Override
             public void onPermissionsChecked(MultiplePermissionsReport report) {
@@ -470,6 +496,8 @@ public class MainPageFragment extends Fragment implements
                             if (response.body() != null) {
                                 bubbleItems.clear();
                                 bubbleItems.addAll(BubbleItem.getLocallyExistBubbleItems(response.body()));
+                                if (currentFilter != null)
+                                    toggleCurrentBubbleAsSelected(bubbleItems);
                                 displayAvailablesEmpty(bubbleItems.isEmpty());
                                 if (bubbleItems.isEmpty()) {
                                     permitToDetect = false;
@@ -485,7 +513,7 @@ public class MainPageFragment extends Fragment implements
                         }
                     });
                 } else {
-                    Helper.showToast(getActivity(), "خطا در دریافت تمام مجوز های مربوطه");
+                    Helper.showToast(getActivity(), "Error in permission");
                 }
             }
 
@@ -494,9 +522,17 @@ public class MainPageFragment extends Fragment implements
                 token.continuePermissionRequest();
             }
         }).withErrorListener(error -> {
-            Helper.showToast(getActivity(), "خطا در دریافت مجوز");
+            Helper.showToast(getActivity(), "Error in permission");
             Log.d(Constants.TAG, error.toString());
         }).check();
+    }
+
+    private void toggleCurrentBubbleAsSelected(List<BubbleItem> bubbleItems) {
+        for (BubbleItem bubbleItem : bubbleItems)
+            if (currentFilter.getId() == bubbleItem.getId()) {
+                bubbleItem.setSelected(true);
+                return;
+            }
     }
 
     private void showDialog() {
@@ -505,8 +541,8 @@ public class MainPageFragment extends Fragment implements
     }
 
     private void expandHandle() {
-        if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.openDrawer(GravityCompat.END);
+        if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.openDrawer(GravityCompat.START);
         }
     }
 
@@ -537,7 +573,6 @@ public class MainPageFragment extends Fragment implements
             rgbBytes = new int[previewWidth * previewHeight];
         try {
             final Image image = reader.acquireLatestImage();
-
             if (image == null)
                 return;
 
@@ -545,6 +580,7 @@ public class MainPageFragment extends Fragment implements
                 image.close();
                 return;
             }
+
             isProcessingFrame = true;
             Trace.beginSection("imageAvailable");
             final Image.Plane[] planes = image.getPlanes();
@@ -568,6 +604,10 @@ public class MainPageFragment extends Fragment implements
             return;
         }
         Trace.endSection();
+    }
+
+    private void storeLatestImage(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     private void fillBytes(final Image.Plane[] planes, final byte[][] yuvBytes) {
@@ -637,14 +677,14 @@ public class MainPageFragment extends Fragment implements
             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
             final Canvas canvas1 = new Canvas(cropCopyBitmap);
             final Paint paint = new Paint();
-            paint.setColor(Color.RED);
+            paint.setColor(Color.GREEN);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(2.0f);
 
             final List<Classifier.Recognition> mappedRecognitions = new LinkedList<>();
             for (final Classifier.Recognition result : results) {
                 final RectF location = result.getLocation();
-                if (location != null && result.getConfidence() >= Constants.MINIMUM_CONFIDENCE_TF_OD_API) {
+                if (location != null && result.getConfidence() >= Helper.getMinimumConfidenceFactor()) {
                     LOGGER.i("Title: " + result.getTitle());
                     canvas1.drawRect(location, paint);
                     cropToFrameTransform.mapRect(location);
@@ -653,7 +693,7 @@ public class MainPageFragment extends Fragment implements
                     mappedRecognitions.add(result);
                 }
             }
-
+            storeLatestImage(cropCopyBitmap);
             tracker.trackResults(mappedRecognitions);
             trackingOverlay.postInvalidate();
             computingDetection = false;

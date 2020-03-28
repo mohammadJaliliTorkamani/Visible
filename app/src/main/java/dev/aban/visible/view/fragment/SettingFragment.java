@@ -1,6 +1,7 @@
 package dev.aban.visible.view.fragment;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,13 +26,16 @@ import dev.aban.visible.utils.Constants;
 import dev.aban.visible.utils.ContextHelper;
 import dev.aban.visible.utils.Helper;
 import dev.aban.visible.utils.custom_view.TextViewPlus;
+import stfalcon.universalpickerdialog.UniversalPickerDialog;
 
 public class SettingFragment extends Fragment implements View.OnClickListener {
     private View view;
 
     private ImageView back;
     private CoordinatorLayout bubbleSoundSwitchContainer;
+    private CoordinatorLayout detectionFactorContainer;
     private Switch bubbleSoundSwitch;
+    private TextViewPlus detectionFactorValue;
     private TextViewPlus openSource;
     private TextViewPlus contactUs;
     private TextViewPlus signOut;
@@ -52,6 +56,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
     private void initialize() {
         bubbleSoundSwitch.setClickable(false);
         bubbleSoundSwitch.setChecked(Helper.loadSetting(Constants._TABLE_USER, Constants._KEY_BUBBLE_SOUND, "true").equals("true"));
+        detectionFactorValue.setText(String.valueOf(Helper.loadSetting(Constants._TABLE_USER, Constants._KEY_CONFIDENCE_FACTOR, String.valueOf(Constants.DEFAULT_MINIMUM_CONFIDENCE_TF_OD_API))));
         initLicenses();
     }
 
@@ -75,6 +80,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         contactUs.setOnClickListener(this);
         openSource.setOnClickListener(this);
         bubbleSoundSwitchContainer.setOnClickListener(this);
+        detectionFactorContainer.setOnClickListener(this);
     }
 
     private void findViews() {
@@ -82,8 +88,10 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         contactUs = view.findViewById(R.id.setting_authority_contact_us);
         signOut = view.findViewById(R.id.setting_authority_log_out);
         openSource = view.findViewById(R.id.setting_legal_open_source_licenses);
+        detectionFactorContainer = view.findViewById(R.id.setting_detection_confidence_factor_container);
         bubbleSoundSwitchContainer = view.findViewById(R.id.setting_general_bubble_sound_container);
         bubbleSoundSwitch = view.findViewById(R.id.setting_general_bubble_sound);
+        detectionFactorValue = view.findViewById(R.id.setting_detection_confidence_factor_value);
     }
 
 
@@ -103,8 +111,30 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
             case R.id.setting_general_bubble_sound_container:
                 bubbleSoundSwitch.setChecked(!bubbleSoundSwitch.isChecked());
                 break;
+            case R.id.setting_detection_confidence_factor_container:
+                openConfidenceFactorSetterDialog();
+                break;
 
         }
+    }
+
+    private void openConfidenceFactorSetterDialog() {
+        new UniversalPickerDialog.Builder(getActivity())
+                .setTitle(R.string.confidence_factor)
+                .setTitleColor(getResources().getColor(R.color.borders_color))
+                .setBackgroundColor(Color.WHITE)
+                .setContentTextColor(getResources().getColor(R.color.borders_color))
+                .setPositiveButtonText(getString(R.string.save))
+                .setNegativeButtonText(getString(android.R.string.cancel))
+                .setPositiveButtonColor(getResources().getColor(R.color.borders_color))
+                .setNegativeButtonColor(getResources().getColor(R.color.borders_color))
+                .setListener((selectedValues, key) -> {
+                    float value = Float.valueOf(Helper.getConfidenceFactors()[selectedValues[key]]);
+                    Helper.saveSetting(Constants._TABLE_USER, Constants._KEY_CONFIDENCE_FACTOR, String.valueOf(value));
+                    detectionFactorValue.setText(String.valueOf(Helper.loadSetting(Constants._TABLE_USER, Constants._KEY_CONFIDENCE_FACTOR, String.valueOf(Constants.DEFAULT_MINIMUM_CONFIDENCE_TF_OD_API))));
+                })
+                .setInputs(new UniversalPickerDialog.Input(0, Helper.getConfidenceFactors()))
+                .show();
     }
 
     private void shoeLicenseDialog() {

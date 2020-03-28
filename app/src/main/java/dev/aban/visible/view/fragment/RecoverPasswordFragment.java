@@ -86,7 +86,7 @@ public class RecoverPasswordFragment extends Fragment implements View.OnClickLis
                         public void onResponse(Call<PasswordRecoverResponse> call, Response<PasswordRecoverResponse> response) {
                             if (response.body() != null) {
                                 if (response.body().isSent()) {
-                                    Helper.showToast(getActivity(), "نام کاربری و رمز عبور با موفقیت به شماره موبایل ارسال شد");
+                                    Helper.showToast(getActivity(), "Username and password successfully sent to phone");
                                     getFragmentManager()
                                             .beginTransaction()
                                             .replace(R.id.activity_main_container, new LoginFragment())
@@ -108,7 +108,7 @@ public class RecoverPasswordFragment extends Fragment implements View.OnClickLis
                         }
                     });
         } else
-            Helper.showToast(getActivity(), "شماره تلفن به درستی وارد نشده است.");
+            Helper.showToast(getActivity(), "phone is not valid");
     }
 
     @Override

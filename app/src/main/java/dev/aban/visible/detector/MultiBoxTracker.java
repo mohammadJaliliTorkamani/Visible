@@ -14,6 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import dev.aban.visible.utils.Constants;
+
 public class MultiBoxTracker {
     private static final float TEXT_SIZE_DIP = 18;
     private static final float MIN_SIZE = 16.0f;
@@ -43,7 +45,7 @@ public class MultiBoxTracker {
 
         boxPaint.setColor(Color.RED);
         boxPaint.setStyle(Paint.Style.STROKE);
-        boxPaint.setStrokeWidth(11.0f);
+        boxPaint.setStrokeWidth(Constants.BOX_STROKE_WIDTH);
         boxPaint.setStrokeCap(Paint.Cap.ROUND);
         boxPaint.setStrokeJoin(Paint.Join.ROUND);
         boxPaint.setStrokeMiter(100);
@@ -76,27 +78,24 @@ public class MultiBoxTracker {
                         (int) (multiplier * (rotated ? frameWidth : frameHeight)),
                         sensorOrientation,
                         false);
+
+
         for (final TrackedRecognition recognition : trackedObjects) {
             final RectF trackedPos = new RectF(recognition.location);
 
             getFrameToCanvasMatrix().mapRect(trackedPos);
             boxPaint.setColor(recognition.color);
 
-            final float cornerSize = Math.min(trackedPos.width(), trackedPos.height()) / 8.0f;
-            canvas.drawRoundRect(trackedPos, cornerSize, cornerSize, boxPaint);
+            canvas.drawRoundRect(trackedPos, Constants.BOX_CORNER_RADIUS, Constants.BOX_CORNER_RADIUS, boxPaint);
 
-            final String labelString =
-                    !TextUtils.isEmpty(recognition.title)
-                            ? String.format("%s %.2f", recognition.title, recognition.detectionConfidence)
-                            : String.format("%.2f", recognition.detectionConfidence);
-            borderedText.drawText(canvas, trackedPos.left + cornerSize, trackedPos.bottom, labelString);
+            final String labelString = !TextUtils.isEmpty(recognition.title)
+                    ? String.format("%s %d %s", recognition.title, (int) (100 * recognition.detectionConfidence), "%")
+                    : String.format("%d %s", (int) (100 * recognition.detectionConfidence), "%");
+            borderedText.drawText(canvas, trackedPos.right - 7 * Constants.BOX_CORNER_RADIUS, trackedPos.bottom + 2 * Constants.BOX_CORNER_RADIUS, labelString);
         }
     }
 
-    public synchronized void onFrame(
-            final int w,
-            final int h,
-            final int sensorOrienation) {
+    public synchronized void onFrame(final int w, final int h, final int sensorOrienation) {
         if (!initialized) {
             frameWidth = w;
             frameHeight = h;
@@ -134,7 +133,7 @@ public class MultiBoxTracker {
         }
 
         if (rectsToTrack.isEmpty()) {
-            logger.v("Nothing to track, aborting.");
+            trackedObjects.clear();
             return;
         }
 

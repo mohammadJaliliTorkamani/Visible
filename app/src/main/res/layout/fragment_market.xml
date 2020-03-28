@@ -29,9 +29,8 @@
             android:id="@+id/fragment_market_back"
             android:layout_width="55dp"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical|right"
+            android:layout_gravity="center_vertical|left"
             android:padding="17dp"
-            android:scaleX="-1"
             android:src="@drawable/ic_back_black" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -39,9 +38,9 @@
     <dev.aban.visible.utils.custom_view.TextViewPlus
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="left"
         android:layout_marginTop="12dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:text="@string/current_features"
         android:textColor="@android:color/black"
         android:textSize="15sp"
@@ -50,9 +49,9 @@
     <View
         android:layout_width="180dp"
         android:layout_height="2dp"
-        android:layout_gravity="right"
+        android:layout_gravity="left"
         android:layout_marginTop="6dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:background="@android:color/black" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -76,9 +75,9 @@
     <dev.aban.visible.utils.custom_view.TextViewPlus
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_gravity="left"
         android:layout_marginTop="32dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:text="@string/newest"
         android:textColor="@android:color/black"
         android:textSize="15sp"
@@ -87,9 +86,9 @@
     <View
         android:layout_width="180dp"
         android:layout_height="2dp"
-        android:layout_gravity="right"
+        android:layout_gravity="left"
         android:layout_marginTop="6dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:background="@android:color/black" />
 
     <androidx.recyclerview.widget.RecyclerView

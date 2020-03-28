@@ -14,6 +14,7 @@ public class BubbleItem {
     private String imageURL;
     private float price;
     private int id;
+    private boolean selected;
     private String sku;
     private boolean permittedToUse;
     private List<String> pictures;
@@ -21,12 +22,21 @@ public class BubbleItem {
     public BubbleItem(String title, String description, String sku, String imageURL, float price, int id, boolean permittedToUse, List<String> pictures) {
         this.title = title;
         this.sku = sku;
+        this.selected = false;
         this.description = description;
         this.imageURL = imageURL;
         this.price = price;
         this.id = id;
         this.permittedToUse = permittedToUse;
         this.pictures = pictures;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     public static BubbleItem getItemWithID(int id, List<BubbleItem> bubbleItemList) {

@@ -23,11 +23,11 @@ public abstract class Constants {
     public static final int CACHE_SIZE = 8 * 1024 * 1024; //unit : MB
     public static final int CACHE_MAX_AGE = 5; //seconds
 
-    public static final String BASE_REQUESTS_URL = "https://aban.dev/visible_fa/api/";
-    public static final String BASE_FILES_URL = "https://aban.dev/visible_fa/repository";
+    public static final String BASE_REQUESTS_URL = "https://aban.dev/visible/api/";
+    public static final String BASE_FILES_URL = "https://aban.dev/visible/repository";
     public static final int PHONE_NMBER_LENGTH = 11;
     public static final String PHONE_NMBER_PREFIX = "09";
-    public static final String PRICE_UNIT = "ریال";
+    public static final String PRICE_UNIT = "$";
     public static final String _KEY_TOKEN = "_key_token";
     public static final String LINKEDIN_LINK = "https://www.linkedin.com/in/mohammad-jalili-torkamani/";
 
@@ -35,18 +35,22 @@ public abstract class Constants {
     //
     public static final Logger LOGGER = new Logger();
     public static final int TF_OD_API_INPUT_SIZE = 200;
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+    public static final float DEFAULT_MINIMUM_CONFIDENCE_TF_OD_API = 0.7f;
     public static final float TEXT_SIZE_DIP = 10;
     public static final Size INPUT_IMAGE_SIZE = new Size(640, 480);
     public static final int MINIMUM_PREVIEW_SIZE = 320;
+    public static final float BOX_CORNER_RADIUS = 20;
+    public static final float BOX_STROKE_WIDTH = 6;
     public static final String _KEY_BUBBLE_SOUND = "_key_bubble_sound";
-    public static final String DFEAULT_FONT_ADDRESS = "fonts/syekan.otf";
+    public static final String DFEAULT_FONT_ADDRESS = "fonts/SF-Pro-Display-Semibold.otf";
     public static final String WEIGHT_FILE_SUFFIX = "_freeze_graph.pb";
     public static final String LABEL_FILE_SUFFIX = "_labels.txt";
     public static final String APP_DIRECTORY_NAME = "visible";
 
     public static final int NAG_THRESHOLD = 3;
     public static final String _KEY_NAG_COUNTER = "_key_nag_counter";
+    public static final String _KEY_CONFIDENCE_FACTOR = "_key_confidence_factor";
+    public static final long SPLASH_DURATION_TIME = 1500;
 
     public static Animation SLIDE_UP_ANIMATION;
     public static Animation NORMAL_SCALE_ANIMATION;

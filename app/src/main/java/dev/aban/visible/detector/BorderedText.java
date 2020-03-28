@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 
+import dev.aban.visible.utils.ContextHelper;
+
 /**
  * A class that encapsulates the tedious bits of rendering legible, bordered text onto a canvas.
  */
@@ -49,12 +51,10 @@ public class BorderedText {
         exteriorPaint.setAntiAlias(false);
         exteriorPaint.setAlpha(255);
 
-        this.textSize = textSize;
-    }
-
-    public void setTypeface(Typeface typeface) {
-        interiorPaint.setTypeface(typeface);
+        Typeface typeface = Typeface.createFromAsset(ContextHelper.retrieveContext().getAssets(), "fonts/SF-Pro-Display-Semibold.otf");
         exteriorPaint.setTypeface(typeface);
+        interiorPaint.setTypeface(typeface);
+        this.textSize = textSize;
     }
 
     public void drawText(final Canvas canvas, final float posX, final float posY, final String text) {

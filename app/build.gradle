@@ -7,11 +7,10 @@ android {
         applicationId "dev.aban.visible"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.5"
+        versionCode 9
+        versionName "1.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField "String", "FLURRY_KEY", "\"3HXGQRNTGBPNRKT42Y46\""
         buildConfigField "String", "APPCENTER", "\"829aa9f6-4c85-49bd-9871-2ead923d1fc8\""
         buildConfigField "String", "TAPSELL_KEY", "\"jaooetcphnmhjesnipchkskcnoleoeqepepeedcdqsanccpelgsmqiphqrsieocdmlokbe\""
         buildConfigField "String", "TAPSELL_DIALOG_ZONE_ID", "\"5e60fa071481a9000164b843\""
@@ -19,7 +18,6 @@ android {
         buildConfigField "String", "TAPSELL_ABOUT_US_ZONE_ID", "\"5e6109801481a9000164b84a\""
         buildConfigField "String", "TAPSELL_PROFILE_ZONE_ID", "\"5e610b9e1481a9000164b854\""
         buildConfigField "String", "TAPSELL_MORE_APPS_ZONE_ID", "\"5e610d531481a9000164b855\""
-        buildConfigField "String", "AIDL_KEY", "\"MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDYalXa47VXwGbNvVrvlVl73kEma2mmaCuKGmSmUpxw2CqaUHwGxOSkoaRRQj8MQMy0JiWur2Z0iPHIh69n+R+IH5GCEYmZfdccA+ZLMXKJli3FUW8DPG6R9CSmermBxn6f+k3tDX/d0NIIFdrqupOv62C8EnRIq+15Md/JujNE+ajxGVJW5SJMKyVnNacLJNgL3SH0tIuo8Q5ewPjvxDXRRX/tOmbBu7mbOvA3MlMCAwEAAQ==\""
     }
     buildTypes {
         release {
@@ -114,4 +112,7 @@ dependencies {
     implementation 'ir.tapsell.sdk:tapsell-sdk-android:4.5.0'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //spinner dialog
+    implementation 'com.github.stfalcon:universalpickerdialog:0.1.0'
 }

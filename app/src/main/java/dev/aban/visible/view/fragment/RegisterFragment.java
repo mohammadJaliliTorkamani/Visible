@@ -153,14 +153,15 @@ public class RegisterFragment extends Fragment implements View.OnClickListener {
     }
 
     private void registerHandler() {
-        if (Helper.isCorrectInput(Constants.InputType.FULL_NAME, fullName) &&
+        if (selectedImageFilePath == null)
+            Helper.showToast(getActivity(), "Select a profile photo");
+        else if (Helper.isCorrectInput(Constants.InputType.FULL_NAME, fullName) &&
                 Helper.isCorrectInput(Constants.InputType.USERNAME, username) &&
                 Helper.isCorrectInput(Constants.InputType.PASSWORD, password) &&
                 Helper.isCorrectInput(Constants.InputType.DAY, day) &&
                 Helper.isCorrectInput(Constants.InputType.MONTH, month) &&
                 Helper.isCorrectInput(Constants.InputType.YEAR, year) &&
-                Helper.isCorrectInput(Constants.InputType.PHONE, phone) &&
-                selectedImageFilePath != null) {
+                Helper.isCorrectInput(Constants.InputType.PHONE, phone)) {
 
 
             showTermsOfUseAldPolicyDialog(() -> {

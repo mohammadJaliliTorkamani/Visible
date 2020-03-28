@@ -47,7 +47,7 @@
             android:background="@color/light_gray"
             android:gravity="center"
             android:minHeight="300dp"
-            android:text="خالی !"
+            android:text="Empty !"
             android:textColor="@android:color/darker_gray"
             android:visibility="visible" />
 
@@ -88,8 +88,9 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center_vertical|left"
-            android:layout_marginLeft="24dp"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginRight="24dp"
+            android:scaleX="-1"
             android:padding="10dp"
             android:src="@drawable/ic_back_accent" />
 

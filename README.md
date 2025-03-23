@@ -1,0 +1,1 @@
+This Android application performs object detection, allowing users to identify specific objects in real time. It includes an in-app store where users can purchase additional AI models, enabling them to access more advanced and specialized object detection capabilities.
